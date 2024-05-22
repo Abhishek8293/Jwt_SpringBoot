@@ -19,24 +19,24 @@ This project implements a JWT (JSON Web Token) based authentication service for 
 ## JWT Authentication Work Flow
 ![image](https://github.com/CodeMythGit/ReadMeNotes/assets/90126232/16a3904a-0445-4f41-a083-722fc953d6f1))
 
-## Getting Started:
+# Getting Started:
 
-### Prerequisites:
+## Prerequisites:
 
 >1. Java Development Kit (JDK)
 >2. Maven (or similar build tool)
 
-### Clone the repository:
+## Clone the repository:
 
 ```git
 Bash
 
 git clone https://https://github.com/Abhishek8293/Jwt_SpringBoot.git
 ```
-### Configure environment variables:
+## Configure environment variables:
 Set the environment variable JWT_SECRET with your desired secret key (a long, base64-encoded string).
 
-### Run the application:
+## Run the application:
 ```git
 Bash
 mvn spring-boot:run
