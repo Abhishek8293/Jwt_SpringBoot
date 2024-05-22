@@ -17,7 +17,7 @@ public class UserRegistrationDto {
 	private String userName;
 	@Email(message = "Invalid E-mail !!")
 	private String email;
-	@NotBlank(message = "Passwork can not be empty or null !!")
+	@NotBlank(message = "Password can't be empty or null !!")
 	private String password;
 	
 	private String roles;

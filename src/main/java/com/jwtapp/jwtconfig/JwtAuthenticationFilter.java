@@ -24,11 +24,15 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	@Autowired
 	private JwtService jwtService;
 
-	@Autowired
 	private CustomUserDetailsService userDetailsService;
+
+	public JwtAuthenticationFilter(JwtService jwtService, CustomUserDetailsService userDetailsService) {
+		super();
+		this.jwtService = jwtService;
+		this.userDetailsService = userDetailsService;
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
