@@ -31,7 +31,10 @@ public class JwtCotroller {
 
 		this.doAuthenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
 		String token = jwtService.generateToken(jwtRequest.getUsername());
-		return ResponseHandler.responseBuilder("Token is successfully generated.", HttpStatus.OK, token);
+		JwtResponse jwtResponse = new JwtResponse();
+		jwtResponse.setTokenType("Bearer");
+		jwtResponse.setToken(token);
+		return ResponseHandler.responseBuilder("Token is successfully generated.", HttpStatus.OK, jwtResponse);
 	}
 
 	// to authenticate the given username and password before generating the
