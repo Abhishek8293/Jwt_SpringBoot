@@ -36,25 +36,18 @@ public class JwtService {
 		return getClaimsFromToken(token, Claims::getExpiration);
 	}
 
-	//To extract the claims in generic way 
+	// To extract the claims in generic way
 	private <T> T getClaimsFromToken(String token, Function<Claims, T> claimsResolver) {
 		final Claims claims = getAllClaims(token);
 		return claimsResolver.apply(claims);
 	}
-	
-	
-	//To extract all the claims from the token 
+
+	// To extract all the claims from the token
 	private Claims getAllClaims(String token) {
-		return Jwts
-				.parserBuilder()
-				.setSigningKey(getSignKey())
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
+		return Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token).getBody();
 	}
 
-	
-	//To check whether the token is expired or not
+	// To check whether the token is expired or not
 	private Boolean isTokenExpired(String token) {
 		final Date expirationDate = getExpirationDateFromToken(token);
 		log.info("EXPIRATION DATE FROM TOKEN: {}", expirationDate);
@@ -69,14 +62,9 @@ public class JwtService {
 
 	// create a token using all the necessary details
 	private String createToken(String username, Map<String, Object> claims) {
-		return Jwts
-				.builder()
-				.setClaims(claims)
-				.setSubject(username)
-				.setIssuedAt(new Date(System.currentTimeMillis()))
+		return Jwts.builder().setClaims(claims).setSubject(username).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-				.signWith(getSignKey(), SignatureAlgorithm.HS256)
-				.compact();
+				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 	}
 
 	// To decode the secrete key

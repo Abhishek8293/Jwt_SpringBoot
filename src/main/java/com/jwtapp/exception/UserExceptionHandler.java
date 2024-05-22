@@ -29,4 +29,12 @@ public class UserExceptionHandler {
 		return new ResponseEntity<Object>(response, HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<Object> userNotFoundExceptionHandler(UserNotFoundException userNotFoundException) {
+
+		UserException userException = new UserException(userNotFoundException.getMessage(),
+				userNotFoundException.getCause(), HttpStatus.NOT_FOUND);
+		return new ResponseEntity<Object>(userException,HttpStatus.NOT_FOUND);
+	}
+
 }

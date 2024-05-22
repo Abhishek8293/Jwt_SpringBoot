@@ -1,10 +1,13 @@
 package com.jwtapp.service;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jwtapp.dto.UserRegistrationDto;
 import com.jwtapp.entity.User;
+import com.jwtapp.exception.UserNotFoundException;
 import com.jwtapp.repository.UserRepository;
 
 @Service
@@ -28,6 +31,14 @@ public class UserService {
 		user.setRoles(userDto.getRoles());
 		return userRepository.save(user);
 
+	}
+
+	public User findUser(Integer userId) {
+		Optional<User> user = userRepository.findById(userId);
+		if (user.isEmpty()) {
+			throw new UserNotFoundException("Requested user does not exist. !!");
+		}
+		return user.get();
 	}
 
 }
