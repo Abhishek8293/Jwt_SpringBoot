@@ -12,6 +12,8 @@ import com.jwtapp.entity.User;
 import com.jwtapp.response.ResponseHandler;
 import com.jwtapp.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
@@ -24,7 +26,7 @@ public class UserController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Object> registerUser(@RequestBody UserRegistrationDto userDto) {
+	public ResponseEntity<Object> registerUser(@Valid @RequestBody UserRegistrationDto userDto) {
 		User user = userService.registerUser(userDto);
 		return ResponseHandler.responseBuilder("User " + user.getUserName() + " is registered successfully",
 				HttpStatus.OK, user);
