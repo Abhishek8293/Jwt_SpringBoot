@@ -31,7 +31,7 @@ This project implements a JWT (JSON Web Token) based authentication service for 
 ```git
 Bash
 
-git clone https://[<your-git-repository-url>](https://github.com/Abhishek8293/Jwt_SpringBoot).git
+git clone https://https://github.com/Abhishek8293/Jwt_SpringBoot.git
 ```
 ### Configure environment variables:
 Set the environment variable JWT_SECRET with your desired secret key (a long, base64-encoded string).
