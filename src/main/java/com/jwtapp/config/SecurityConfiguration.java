@@ -35,13 +35,13 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/user/noauth", "/api/v1/user", "/api/v1/auth").permitAll()
-						.anyRequest().authenticated())
+				.authorizeHttpRequests(
+						auth -> auth.requestMatchers("/api/v1/user/noauth", "/api/v1/user", "/api/v1/auth").permitAll()
+								.anyRequest().authenticated())
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(point))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-				.formLogin(Customizer.withDefaults())
-				.logout(logout -> logout.logoutUrl("/random").logoutSuccessUrl("/out").permitAll());
+				.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+
 		return http.build();
 	}
 
