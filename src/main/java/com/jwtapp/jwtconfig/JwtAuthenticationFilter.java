@@ -22,7 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
-@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Autowired
@@ -35,16 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String requestHeader = request.getHeader("Authorization");
-		log.info("Header :  {}", requestHeader);
 		String username = null;
 		String token = null;
 
 		if (requestHeader != null && requestHeader.startsWith("Bearer")) {
 			token = requestHeader.substring(7);
-			log.info("TOKEN: {} ", token);
 			try {
 				username = this.jwtService.getUsernameFromToken(token);
-				log.info("USERNAME:{} ", username);
 			} catch (IllegalArgumentException e) {
 				logger.info("Illegal Argument while fetching the username !!");
 				e.printStackTrace();
@@ -66,7 +62,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 			Boolean validateToken = this.jwtService.validateToken(token, userDetails);
 
-			log.info("VALIDATE TOKEN: {}", validateToken);
 			if (validateToken) {
 
 				// set the authentication
