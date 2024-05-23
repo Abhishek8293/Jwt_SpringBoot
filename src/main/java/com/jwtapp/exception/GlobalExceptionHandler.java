@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class UserExceptionHandler {
+public class GlobalExceptionHandler {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Object> methodArgumentNotValidExceptionHandler(

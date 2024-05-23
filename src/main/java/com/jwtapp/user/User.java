@@ -1,9 +1,14 @@
 package com.jwtapp.user;
 
+import java.util.List;
+
+import com.jwtapp.token.Token;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +30,9 @@ public class User {
 	private String email;
 	private String password;
 	private String roles;
+	
+	@OneToMany(mappedBy = "user")
+	private List<Token> token;
 	
 
 }

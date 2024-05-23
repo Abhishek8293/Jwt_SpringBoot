@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jwtapp.response.ResponseHandler;
+import com.jwtapp.token.TokenRepository;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -19,11 +20,14 @@ public class JwtCotroller {
 	private JwtService jwtService;
 
 	private AuthenticationManager authenticationManager;
+	
+	private TokenRepository tokenRepository;
 
-	public JwtCotroller(JwtService jwtService, AuthenticationManager authenticationManager) {
+	public JwtCotroller(JwtService jwtService, AuthenticationManager authenticationManager,TokenRepository tokenRepository) {
 		super();
 		this.jwtService = jwtService;
 		this.authenticationManager = authenticationManager;
+		this.tokenRepository = tokenRepository;
 	}
 
 	@PostMapping
