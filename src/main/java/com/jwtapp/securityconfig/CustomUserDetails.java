@@ -1,4 +1,4 @@
-package com.jwtapp.config;
+package com.jwtapp.securityconfig;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.jwtapp.entity.User;
+import com.jwtapp.user.User;
 
 public class CustomUserDetails implements UserDetails {
 

@@ -1,4 +1,4 @@
-package com.jwtapp.service;
+package com.jwtapp.user;
 
 import java.util.Optional;
 
@@ -6,9 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jwtapp.dto.UserRegistrationDto;
-import com.jwtapp.entity.User;
 import com.jwtapp.exception.UserNotFoundException;
-import com.jwtapp.repository.UserRepository;
 
 @Service
 public class UserService {

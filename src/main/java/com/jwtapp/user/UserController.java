@@ -1,4 +1,4 @@
-package com.jwtapp.controller;
+package com.jwtapp.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jwtapp.dto.UserRegistrationDto;
-import com.jwtapp.entity.User;
 import com.jwtapp.response.ResponseHandler;
-import com.jwtapp.service.UserService;
 
 import jakarta.validation.Valid;
 
