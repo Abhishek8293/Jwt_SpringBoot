@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jwtapp.response.ResponseHandler;
+import com.jwtapp.token.Token;
 import com.jwtapp.token.TokenRepository;
+import com.jwtapp.user.User;
+import com.jwtapp.user.UserRepository;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -20,24 +23,32 @@ public class JwtCotroller {
 	private JwtService jwtService;
 
 	private AuthenticationManager authenticationManager;
-	
+
 	private TokenRepository tokenRepository;
 
-	public JwtCotroller(JwtService jwtService, AuthenticationManager authenticationManager,TokenRepository tokenRepository) {
+	private UserRepository userRepository;
+
+	public JwtCotroller(JwtService jwtService, AuthenticationManager authenticationManager,
+			TokenRepository tokenRepository, UserRepository userRepository) {
 		super();
 		this.jwtService = jwtService;
 		this.authenticationManager = authenticationManager;
 		this.tokenRepository = tokenRepository;
+		this.userRepository = userRepository;
 	}
 
 	@PostMapping
 	public ResponseEntity<Object> login(@RequestBody JwtRequest jwtRequest) {
 
 		this.doAuthenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
-		String token = jwtService.generateToken(jwtRequest.getUsername());
+		String jwtToken = jwtService.generateToken(jwtRequest.getUsername());
+
+		saveUserToken(jwtRequest.getUsername(), jwtToken);
+
 		JwtResponse jwtResponse = new JwtResponse();
 		jwtResponse.setTokenType("Bearer");
-		jwtResponse.setToken(token);
+		jwtResponse.setToken(jwtToken);
+
 		return ResponseHandler.responseBuilder("Token is successfully generated.", HttpStatus.OK, jwtResponse);
 	}
 
@@ -52,6 +63,15 @@ public class JwtCotroller {
 			throw new BadCredentialsException("Credentials Invalid !!");
 		}
 
+	}
+	
+	private void saveUserToken(String username,String jwtToken) {
+		User user = userRepository.findByUserName(username);
+		Token token = new Token();
+		token.setJwtToken(jwtToken);
+		token.setUser(user);
+		token.setLoggedOut("false");
+		tokenRepository.save(token);
 	}
 
 }

@@ -26,7 +26,8 @@ public class Token {
 	
 	private String jwtToken;
 	
-	private boolean loggedOut;
+	
+	private String loggedOut;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")

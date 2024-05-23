@@ -12,6 +12,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import io.jsonwebtoken.ExpiredJwtException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -35,6 +37,11 @@ public class GlobalExceptionHandler {
 		UserException userException = new UserException(userNotFoundException.getMessage(),
 				userNotFoundException.getCause(), HttpStatus.NOT_FOUND);
 		return new ResponseEntity<Object>(userException,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(ExpiredJwtException.class)
+	public ResponseEntity<Object> expiredJwtExceptionHandler(ExpiredJwtException expiredJwtException){
+		return new ResponseEntity<Object>(expiredJwtException.getMessage(),HttpStatus.UNAUTHORIZED);
 	}
 
 }
