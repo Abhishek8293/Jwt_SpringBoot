@@ -9,6 +9,8 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.jwtapp.token.TokenRepository;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,6 +21,15 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class JwtService {
+	
+	private final TokenRepository tokenRepository;
+	
+	
+
+	public JwtService(TokenRepository tokenRepository) {
+		super();
+		this.tokenRepository = tokenRepository;
+	}
 
 	// expiration time
 	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60; // This 5hr*60 minutes *60 seconds
@@ -76,7 +87,8 @@ public class JwtService {
 	// To validate the token
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String userName = getUsernameFromToken(token);
-		return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+		boolean isValidToken = Boolean.parseBoolean(tokenRepository.findByJwtToken(token).get().getLoggedOut());
+		return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token) && !isValidToken);
 	}
 
 }

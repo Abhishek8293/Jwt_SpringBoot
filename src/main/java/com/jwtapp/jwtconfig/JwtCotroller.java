@@ -1,5 +1,7 @@
 package com.jwtapp.jwtconfig;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,8 +44,9 @@ public class JwtCotroller {
 
 		this.doAuthenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
 		String jwtToken = jwtService.generateToken(jwtRequest.getUsername());
-
-		saveUserToken(jwtRequest.getUsername(), jwtToken);
+		User user = userRepository.findByUserName(jwtRequest.getUsername());
+		revokeAllTokenByUser(user);
+		saveUserToken(user, jwtToken);
 
 		JwtResponse jwtResponse = new JwtResponse();
 		jwtResponse.setTokenType("Bearer");
@@ -64,14 +67,22 @@ public class JwtCotroller {
 		}
 
 	}
-	
-	private void saveUserToken(String username,String jwtToken) {
-		User user = userRepository.findByUserName(username);
+
+	private void saveUserToken(User user, String jwtToken) {
 		Token token = new Token();
 		token.setJwtToken(jwtToken);
 		token.setUser(user);
 		token.setLoggedOut("false");
 		tokenRepository.save(token);
+	}
+
+	private void revokeAllTokenByUser(User user) {
+			List<Token> validTokenList = tokenRepository.findAllTokenByUser(user.getUserId());
+			if (!validTokenList.isEmpty()) {
+				validTokenList.forEach(t-> {t.setLoggedOut("true");
+					});
+			}
+			tokenRepository.saveAll(validTokenList);
 	}
 
 }

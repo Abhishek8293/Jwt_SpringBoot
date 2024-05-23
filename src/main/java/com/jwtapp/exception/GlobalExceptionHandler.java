@@ -43,5 +43,11 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Object> expiredJwtExceptionHandler(ExpiredJwtException expiredJwtException){
 		return new ResponseEntity<Object>(expiredJwtException.getMessage(),HttpStatus.UNAUTHORIZED);
 	}
+	
+	@ExceptionHandler(TokenNotFoundException.class)
+	public ResponseEntity<Object> tokenNotFoundException(TokenNotFoundException tokenNotFoundException){
+		TokenException tokenException = new TokenException(tokenNotFoundException.getMessage(), tokenNotFoundException.getCause(), HttpStatus.NOT_FOUND);
+		return new ResponseEntity<Object>(tokenException,HttpStatus.NOT_FOUND);
+	}
 
 }

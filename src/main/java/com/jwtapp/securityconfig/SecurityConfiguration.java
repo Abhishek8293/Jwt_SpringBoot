@@ -8,7 +8,9 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,6 +28,9 @@ public class SecurityConfiguration {
 
 	@Autowired
 	private JwtAuthenticationEntryPoint point;
+	
+	@Autowired
+	private CustomLogoutHandler logoutHandler;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -40,7 +45,11 @@ public class SecurityConfiguration {
 								.anyRequest().authenticated())
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(point))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+				.logout(logout -> logout.logoutUrl("/logout")
+						.addLogoutHandler(logoutHandler)
+						.logoutSuccessHandler((request,response,authentication)-> SecurityContextHolder.clearContext()));
+		
 
 		return http.build();
 	}
