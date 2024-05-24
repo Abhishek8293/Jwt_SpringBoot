@@ -36,18 +36,26 @@ public class GlobalExceptionHandler {
 
 		UserException userException = new UserException(userNotFoundException.getMessage(),
 				userNotFoundException.getCause(), HttpStatus.NOT_FOUND);
-		return new ResponseEntity<Object>(userException,HttpStatus.NOT_FOUND);
-	}
-	
-	@ExceptionHandler(ExpiredJwtException.class)
-	public ResponseEntity<Object> expiredJwtExceptionHandler(ExpiredJwtException expiredJwtException){
-		return new ResponseEntity<Object>(expiredJwtException.getMessage(),HttpStatus.UNAUTHORIZED);
-	}
-	
-	@ExceptionHandler(TokenNotFoundException.class)
-	public ResponseEntity<Object> tokenNotFoundException(TokenNotFoundException tokenNotFoundException){
-		TokenException tokenException = new TokenException(tokenNotFoundException.getMessage(), tokenNotFoundException.getCause(), HttpStatus.NOT_FOUND);
-		return new ResponseEntity<Object>(tokenException,HttpStatus.NOT_FOUND);
+		return new ResponseEntity<Object>(userException, HttpStatus.NOT_FOUND);
 	}
 
+	@ExceptionHandler(ExpiredJwtException.class)
+	public ResponseEntity<Object> expiredJwtExceptionHandler(ExpiredJwtException expiredJwtException) {
+		return new ResponseEntity<Object>(expiredJwtException.getMessage(), HttpStatus.UNAUTHORIZED);
+	}
+
+	@ExceptionHandler(TokenNotFoundException.class)
+	public ResponseEntity<Object> tokenNotFoundException(TokenNotFoundException tokenNotFoundException) {
+		TokenException tokenException = new TokenException(tokenNotFoundException.getMessage(),
+				tokenNotFoundException.getCause(), HttpStatus.NOT_FOUND);
+		return new ResponseEntity<Object>(tokenException, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	public ResponseEntity<Object> userAlreadyExistsExceptionHandler(
+			UserAlreadyExistsException userAlreadyExistsException) {
+		UserException userException = new UserException(userAlreadyExistsException.getMessage(),
+				userAlreadyExistsException.getCause(), HttpStatus.CONFLICT);
+		return new ResponseEntity<Object>(userException, HttpStatus.CONFLICT);
+	}
 }

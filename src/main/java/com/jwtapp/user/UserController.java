@@ -27,7 +27,7 @@ public class UserController {
 	@PostMapping
 	public ResponseEntity<Object> registerUser(@Valid @RequestBody UserRegistrationDto userDto) {
 		User user = userService.registerUser(userDto);
-		return ResponseHandler.responseBuilder("User " + user.getUserName() + " is registered successfully",
+		return ResponseHandler.responseBuilder( user.getUserName() + " is registered successfully",
 				HttpStatus.OK, user);
 	}
 

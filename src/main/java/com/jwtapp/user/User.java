@@ -2,6 +2,7 @@ package com.jwtapp.user;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jwtapp.token.Token;
 
 import jakarta.persistence.Entity;
@@ -32,6 +33,7 @@ public class User {
 	private String roles;
 	
 	@OneToMany(mappedBy = "user")
+	@JsonManagedReference
 	private List<Token> token;
 	
 

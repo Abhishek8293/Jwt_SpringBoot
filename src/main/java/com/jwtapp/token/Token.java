@@ -1,5 +1,6 @@
 package com.jwtapp.token;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jwtapp.user.User;
 
 import jakarta.persistence.Entity;
@@ -31,6 +32,7 @@ public class Token {
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	@JsonBackReference
 	private User user;
 	
 	

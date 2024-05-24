@@ -1,12 +1,17 @@
 package com.jwtapp.user;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jwtapp.dto.UserRegistrationDto;
+import com.jwtapp.exception.UserAlreadyExistsException;
 import com.jwtapp.exception.UserNotFoundException;
+import com.jwtapp.jwtconfig.JwtService;
+import com.jwtapp.token.Token;
+import com.jwtapp.token.TokenServiceImpl;
 
 @Service
 public class UserService {
@@ -15,20 +20,38 @@ public class UserService {
 
 	private final PasswordEncoder passwordEncoder;
 
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+	private final JwtService jwtService;
+
+	private final TokenServiceImpl tokenServiceImpl;
+
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService,
+			TokenServiceImpl tokenServiceImpl) {
 		super();
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.jwtService = jwtService;
+		this.tokenServiceImpl = tokenServiceImpl;
 	}
 
 	public User registerUser(UserRegistrationDto userDto) {
-		User user = new User();
-		user.setUserName(userDto.getUserName());
-		user.setEmail(userDto.getEmail());
-		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-		user.setRoles(userDto.getRoles());
-		return userRepository.save(user);
 
+		Optional<User> alreadyExistingUser = userRepository.findByUserName(userDto.getUserName());
+		if (alreadyExistingUser.isPresent()) {
+			throw new UserAlreadyExistsException(
+					"Username " + userDto.getUserName() + " is already registered");
+		}
+
+		User newUser = new User();
+		newUser.setUserName(userDto.getUserName());
+		newUser.setEmail(userDto.getEmail());
+		newUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+		newUser.setRoles(userDto.getRoles());
+		User savedUser = userRepository.save(newUser);
+		String jwtToken = jwtService.generateToken(savedUser.getUserName());
+		Token savedToken = tokenServiceImpl.saveUserToken(savedUser, jwtToken);
+		savedUser.setToken(Arrays.asList(savedToken));
+		
+		return savedUser;
 	}
 
 	public User findUser(Integer userId) {

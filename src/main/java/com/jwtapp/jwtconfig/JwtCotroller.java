@@ -5,12 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jwtapp.response.ResponseHandler;
+import com.jwtapp.token.TokenServiceImpl;
 import com.jwtapp.user.User;
 import com.jwtapp.user.UserRepository;
 
@@ -24,12 +26,15 @@ public class JwtCotroller {
 
 	private final AuthenticationManager authenticationManager;
 
+	private final TokenServiceImpl tokenServiceImpl;
+
 	public JwtCotroller(JwtService jwtService, UserRepository userRepository,
-			AuthenticationManager authenticationManager) {
+			AuthenticationManager authenticationManager, TokenServiceImpl tokenServiceImpl) {
 		super();
 		this.jwtService = jwtService;
 		this.userRepository = userRepository;
 		this.authenticationManager = authenticationManager;
+		this.tokenServiceImpl = tokenServiceImpl;
 	}
 
 	@PostMapping
@@ -37,9 +42,9 @@ public class JwtCotroller {
 
 		doAuthenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
 		String jwtToken = jwtService.generateToken(jwtRequest.getUsername());
-		User user = userRepository.findByUserName(jwtRequest.getUsername());
-		jwtService.revokeAllTokenByUser(user);
-		jwtService.saveUserToken(user, jwtToken);
+		User user = userRepository.findByUserName(jwtRequest.getUsername()).get();
+		tokenServiceImpl.revokeAllTokenByUser(user);
+		tokenServiceImpl.saveUserToken(user, jwtToken);
 
 		JwtResponse jwtResponse = new JwtResponse();
 		jwtResponse.setTokenType("Bearer");
