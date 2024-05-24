@@ -2,26 +2,24 @@ package com.jwtapp.jwtconfig;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.jwtapp.exception.MissingTokenException;
 import com.jwtapp.securityconfig.CustomUserDetailsService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
@@ -40,7 +38,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		if (requestHeader != null && requestHeader.startsWith("Bearer")) {
 			token = requestHeader.substring(7);
-			username = this.jwtService.getUsernameFromToken(token);
+			try {
+				username = this.jwtService.getUsernameFromToken(token);
+			} catch (ExpiredJwtException e) {
+				e.printStackTrace();
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+				response.getWriter().write("Your JWT token has expired. Please login again.");
+			} catch (MalformedJwtException e) {
+				e.printStackTrace();
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+				response.getWriter().write("Invalid JWT token");
+			} catch (SignatureException e) {
+				e.printStackTrace();
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+				response.getWriter().write("Invalid Token Signature");
+
+			}
 		} else {
 			filterChain.doFilter(request, response);
 			return;

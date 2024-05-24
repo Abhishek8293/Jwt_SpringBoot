@@ -12,8 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import io.jsonwebtoken.ExpiredJwtException;
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -47,13 +45,6 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<Object>(userException, HttpStatus.CONFLICT);
 	}
 
-	@ExceptionHandler(ExpiredJwtException.class)
-	public ResponseEntity<Object> expiredJwtExceptionHandler(ExpiredJwtException expiredJwtException) {
-		TokenException tokenException = new TokenException("Token has Expired. !!",
-				expiredJwtException.getCause(), HttpStatus.UNAUTHORIZED);
-		return new ResponseEntity<Object>(tokenException, HttpStatus.UNAUTHORIZED);
-	}
-
 	@ExceptionHandler(TokenNotFoundException.class)
 	public ResponseEntity<Object> tokenNotFoundException(TokenNotFoundException tokenNotFoundException) {
 		TokenException tokenException = new TokenException(tokenNotFoundException.getMessage(),
@@ -61,11 +52,5 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<Object>(tokenException, HttpStatus.NOT_FOUND);
 	}
 
-	@ExceptionHandler(MissingTokenException.class)
-	public ResponseEntity<Object> missingTokenException(MissingTokenException missingTokenException) {
-		TokenException tokenException = new TokenException(missingTokenException.getMessage(),
-				missingTokenException.getCause(), HttpStatus.UNAUTHORIZED);
-		return new ResponseEntity<Object>(tokenException,HttpStatus.UNAUTHORIZED);
-	}
 
 }

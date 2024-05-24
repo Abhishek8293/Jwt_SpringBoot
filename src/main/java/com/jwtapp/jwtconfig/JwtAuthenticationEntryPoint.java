@@ -21,8 +21,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 		PrintWriter writer = response.getWriter();
 		if(request.getHeader("Authorization")==null) {
 			writer.println("Missing Token");
-		}else {
-			writer.println("Invalid Credentials");
 		}
 	}
 
