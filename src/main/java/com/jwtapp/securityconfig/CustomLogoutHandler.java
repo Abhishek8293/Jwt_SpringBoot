@@ -12,16 +12,13 @@ import com.jwtapp.token.TokenRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class CustomLogoutHandler implements LogoutHandler {
 
 	private final TokenRepository tokenRepository;
-
-	public CustomLogoutHandler(TokenRepository tokenRepository) {
-		super();
-		this.tokenRepository = tokenRepository;
-	}
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

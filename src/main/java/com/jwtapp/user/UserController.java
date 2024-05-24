@@ -12,23 +12,19 @@ import com.jwtapp.dto.UserRegistrationDto;
 import com.jwtapp.response.ResponseHandler;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
 public class UserController {
 
 	private final UserService userService;
 
-	public UserController(UserService userService) {
-		super();
-		this.userService = userService;
-	}
-
 	@PostMapping
 	public ResponseEntity<Object> registerUser(@Valid @RequestBody UserRegistrationDto userDto) {
 		User user = userService.registerUser(userDto);
-		return ResponseHandler.responseBuilder( user.getUserName() + " is registered successfully",
-				HttpStatus.OK, user);
+		return ResponseHandler.responseBuilder(user.getUserName() + " is registered successfully", HttpStatus.OK, user);
 	}
 
 	@GetMapping("/{userId}")

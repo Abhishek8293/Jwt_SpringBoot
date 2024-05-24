@@ -8,15 +8,13 @@ import org.springframework.stereotype.Service;
 import com.jwtapp.user.User;
 import com.jwtapp.user.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
 	private final UserRepository userRepository;
-
-	public CustomUserDetailsService(UserRepository userRepository) {
-		super();
-		this.userRepository = userRepository;
-	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

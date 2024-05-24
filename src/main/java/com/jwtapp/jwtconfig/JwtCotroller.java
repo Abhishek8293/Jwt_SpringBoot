@@ -16,7 +16,10 @@ import com.jwtapp.token.TokenServiceImpl;
 import com.jwtapp.user.User;
 import com.jwtapp.user.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class JwtCotroller {
 
@@ -27,15 +30,6 @@ public class JwtCotroller {
 	private final AuthenticationManager authenticationManager;
 
 	private final TokenServiceImpl tokenServiceImpl;
-
-	public JwtCotroller(JwtService jwtService, UserRepository userRepository,
-			AuthenticationManager authenticationManager, TokenServiceImpl tokenServiceImpl) {
-		super();
-		this.jwtService = jwtService;
-		this.userRepository = userRepository;
-		this.authenticationManager = authenticationManager;
-		this.tokenServiceImpl = tokenServiceImpl;
-	}
 
 	@PostMapping
 	public ResponseEntity<Object> login(@RequestBody JwtRequest jwtRequest) {

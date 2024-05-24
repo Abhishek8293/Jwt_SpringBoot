@@ -22,17 +22,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
+@RequiredArgsConstructor
 public class JwtService {
 
 	private final TokenRepository tokenRepository;
-
-	public JwtService(TokenRepository tokenRepository) {
-		super();
-		this.tokenRepository = tokenRepository;
-	}
 
 	// expiration time
 	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60; // This 5hr*60 minutes *60 seconds
@@ -92,7 +89,5 @@ public class JwtService {
 		boolean isValidToken = Boolean.parseBoolean(tokenRepository.findByJwtToken(token).get().getLoggedOut());
 		return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token) && !isValidToken);
 	}
-
-	
 
 }

@@ -6,15 +6,13 @@ import org.springframework.stereotype.Service;
 
 import com.jwtapp.user.User;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class TokenServiceImpl {
 
 	private final TokenRepository tokenRepository;
-
-	public TokenServiceImpl(TokenRepository tokenRepository) {
-		super();
-		this.tokenRepository = tokenRepository;
-	}
 
 	public Token saveUserToken(User user, String jwtToken) {
 		Token token = new Token();

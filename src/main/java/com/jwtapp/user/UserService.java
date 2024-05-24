@@ -13,7 +13,10 @@ import com.jwtapp.jwtconfig.JwtService;
 import com.jwtapp.token.Token;
 import com.jwtapp.token.TokenServiceImpl;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
 	private final UserRepository userRepository;
@@ -24,21 +27,11 @@ public class UserService {
 
 	private final TokenServiceImpl tokenServiceImpl;
 
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService,
-			TokenServiceImpl tokenServiceImpl) {
-		super();
-		this.userRepository = userRepository;
-		this.passwordEncoder = passwordEncoder;
-		this.jwtService = jwtService;
-		this.tokenServiceImpl = tokenServiceImpl;
-	}
-
 	public User registerUser(UserRegistrationDto userDto) {
 
 		Optional<User> alreadyExistingUser = userRepository.findByUserName(userDto.getUserName());
 		if (alreadyExistingUser.isPresent()) {
-			throw new UserAlreadyExistsException(
-					"Username " + userDto.getUserName() + " is already registered");
+			throw new UserAlreadyExistsException("Username " + userDto.getUserName() + " is already registered");
 		}
 
 		User newUser = new User();
@@ -50,7 +43,7 @@ public class UserService {
 		String jwtToken = jwtService.generateToken(savedUser.getUserName());
 		Token savedToken = tokenServiceImpl.saveUserToken(savedUser, jwtToken);
 		savedUser.setToken(Arrays.asList(savedToken));
-		
+
 		return savedUser;
 	}
 
