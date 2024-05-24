@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.jwtapp.exception.MissingTokenException;
 import com.jwtapp.securityconfig.CustomUserDetailsService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -39,22 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		if (requestHeader != null && requestHeader.startsWith("Bearer")) {
 			token = requestHeader.substring(7);
-			try {
-				username = this.jwtService.getUsernameFromToken(token);
-			} catch (IllegalArgumentException e) {
-				logger.info("Illegal Argument while fetching the username !!");
-				e.printStackTrace();
-			} catch (ExpiredJwtException e) {
-				logger.info("Given jwt token is expired !!");
-				e.printStackTrace();
-			} catch (MalformedJwtException e) {
-				logger.info("Some changed has done in token !! Invalid Token");
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			username = this.jwtService.getUsernameFromToken(token);
 		} else {
-			logger.info("Invalid Header Value !! ");
+			filterChain.doFilter(request, response);
+			return;
 		}
 
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -63,18 +52,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			Boolean validateToken = this.jwtService.validateToken(token, userDetails);
 
 			if (validateToken) {
-
 				// set the authentication
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
 				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-
-			} else {
-				logger.info("Validation fails !!");
 			}
 		}
-
 		filterChain.doFilter(request, response);
 
 	}

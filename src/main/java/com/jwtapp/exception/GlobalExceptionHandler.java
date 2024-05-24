@@ -39,9 +39,19 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<Object>(userException, HttpStatus.NOT_FOUND);
 	}
 
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	public ResponseEntity<Object> userAlreadyExistsExceptionHandler(
+			UserAlreadyExistsException userAlreadyExistsException) {
+		UserException userException = new UserException(userAlreadyExistsException.getMessage(),
+				userAlreadyExistsException.getCause(), HttpStatus.CONFLICT);
+		return new ResponseEntity<Object>(userException, HttpStatus.CONFLICT);
+	}
+
 	@ExceptionHandler(ExpiredJwtException.class)
 	public ResponseEntity<Object> expiredJwtExceptionHandler(ExpiredJwtException expiredJwtException) {
-		return new ResponseEntity<Object>(expiredJwtException.getMessage(), HttpStatus.UNAUTHORIZED);
+		TokenException tokenException = new TokenException("Token has Expired. !!",
+				expiredJwtException.getCause(), HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<Object>(tokenException, HttpStatus.UNAUTHORIZED);
 	}
 
 	@ExceptionHandler(TokenNotFoundException.class)
@@ -51,11 +61,11 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<Object>(tokenException, HttpStatus.NOT_FOUND);
 	}
 
-	@ExceptionHandler(UserAlreadyExistsException.class)
-	public ResponseEntity<Object> userAlreadyExistsExceptionHandler(
-			UserAlreadyExistsException userAlreadyExistsException) {
-		UserException userException = new UserException(userAlreadyExistsException.getMessage(),
-				userAlreadyExistsException.getCause(), HttpStatus.CONFLICT);
-		return new ResponseEntity<Object>(userException, HttpStatus.CONFLICT);
+	@ExceptionHandler(MissingTokenException.class)
+	public ResponseEntity<Object> missingTokenException(MissingTokenException missingTokenException) {
+		TokenException tokenException = new TokenException(missingTokenException.getMessage(),
+				missingTokenException.getCause(), HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<Object>(tokenException,HttpStatus.UNAUTHORIZED);
 	}
+
 }

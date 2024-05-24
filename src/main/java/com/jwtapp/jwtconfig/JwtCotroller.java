@@ -50,12 +50,7 @@ public class JwtCotroller {
 	private void doAuthenticate(String username, String password) {
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username,
 				password);
-		try {
-			authenticationManager.authenticate(authentication);
-		} catch (BadCredentialsException e) {
-			throw new BadCredentialsException("Credentials Invalid !!");
-		}
-
+		authenticationManager.authenticate(authentication);
 	}
 
 }

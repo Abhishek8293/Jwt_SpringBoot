@@ -3,6 +3,7 @@ package com.jwtapp.securityconfig;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Component;
 
@@ -33,8 +34,9 @@ public class CustomLogoutHandler implements LogoutHandler {
 			throw new TokenNotFoundException("Token not found !!!");
 		}
 		Token updatedToken = storedToken.get();
+		updatedToken.setLoggedOut("true");
 		tokenRepository.save(updatedToken);
-
+		SecurityContextHolder.clearContext();
 	}
 
 }
