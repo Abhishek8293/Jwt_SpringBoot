@@ -1,4 +1,4 @@
-package com.jwtapp.securityconfig;
+package com.jwtapp.user;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,32 +9,26 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.jwtapp.user.User;
-
 public class CustomUserDetails implements UserDetails {
 
-	private String username;
+	private String email;
 	private String password;
-	private List<GrantedAuthority> authorities;
+	private Role authorities;
 
 	public CustomUserDetails() {
-		
+
 	}
-	
+
 	public CustomUserDetails(User user) {
-		this.username = user.getUserName();
-		this.password=user.getPassword();
-		this.authorities = Arrays.stream(user.getRoles().split(","))
-							.map(SimpleGrantedAuthority::new )
-							.collect(Collectors.toList());
+		this.email = user.getEmail();
+		this.password = user.getPassword();
+		this.authorities = user.getRoles();
 	}
-	
-	
-	
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return authorities;
+		System.out.println("Authorities in UserDetails File --->"+authorities.toString());
+		return List.of(new SimpleGrantedAuthority(authorities.name()));
 	}
 
 	@Override
@@ -44,7 +38,7 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return username;
+		return email;
 	}
 
 	@Override
