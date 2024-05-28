@@ -40,11 +40,9 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/user","/auth/login").permitAll()
-						.requestMatchers("/api/admin").hasAnyAuthority(Role.ADMIN.name())
-						.requestMatchers("/api/noadmin").hasAnyAuthority(Role.USER.name())
-						.anyRequest().authenticated())
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/user", "/auth/login", "/verify/**")
+						.permitAll().requestMatchers("/api/admin").hasAnyAuthority(Role.ADMIN.name())
+						.requestMatchers("/api/noadmin").hasAnyAuthority(Role.USER.name()).anyRequest().authenticated())
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(point))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

@@ -25,7 +25,7 @@ public class AuthController {
 	private final JwtService jwtService;
 
 	private final AuthenticationManager authenticationManager;
-	
+
 	private final CustomUserDetailsService customUserDetailsService;
 
 	@PostMapping
@@ -37,8 +37,7 @@ public class AuthController {
 	}
 
 	private void doAuthenticate(String email, String password) {
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email,
-				password);
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
 		authenticationManager.authenticate(authentication);
 	}
 
