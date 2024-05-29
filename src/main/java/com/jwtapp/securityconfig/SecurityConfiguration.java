@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.jwtapp.jwtconfig.CustomAccessDeniedHandler;
 import com.jwtapp.jwtconfig.JwtAuthenticationEntryPoint;
 import com.jwtapp.jwtconfig.JwtAuthenticationFilter;
 import com.jwtapp.user.CustomUserDetailsService;
@@ -33,6 +34,9 @@ public class SecurityConfiguration {
 
 	@Autowired
 	private JwtAuthenticationEntryPoint point;
+	
+	@Autowired
+	private CustomAccessDeniedHandler customAccessDeniedHandler;
 
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
@@ -44,7 +48,7 @@ public class SecurityConfiguration {
 						.requestMatchers("/api/admin").hasAnyAuthority(Role.ADMIN.name())
 						.requestMatchers("/api/noadmin").hasAnyAuthority(Role.USER.name())
 						.anyRequest().authenticated())
-				.exceptionHandling(ex -> ex.authenticationEntryPoint(point))
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(point).accessDeniedHandler(customAccessDeniedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 

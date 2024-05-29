@@ -2,6 +2,7 @@ package com.jwtapp.authexception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,5 +26,12 @@ public class AuthExceptionHandler {
 				HttpStatus.UNAUTHORIZED);
 		return new ResponseEntity<>(authException, HttpStatus.UNAUTHORIZED);
 	}
+	
+//	@ExceptionHandler(value = { AccessDeniedException.class })
+//	public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException accessDeniedException) {
+//		AuthException authException = new AuthException(accessDeniedException.getMessage(), accessDeniedException.getCause(),
+//				HttpStatus.FORBIDDEN);
+//		return new ResponseEntity<>(authException, HttpStatus.UNAUTHORIZED);
+//	}
 
 }
