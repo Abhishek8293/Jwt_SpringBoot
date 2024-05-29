@@ -1,6 +1,8 @@
 package com.jwtapp.jwtconfig;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,6 +12,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jwtapp.user.CustomUserDetailsService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -42,9 +45,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			try {
 				userName = this.jwtService.getUsernameFromToken(jwtToken);
 			} catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
+				
+				//creating a map object for desired response
+				Map<String, Object> responseObject= new HashMap<>();
+				responseObject.put("message", e.getMessage());
+				responseObject.put("httpStatus", HttpStatus.UNAUTHORIZED);
+				
+				//Converting object to json using ObjectMapper 
+				ObjectMapper objectMapper = new ObjectMapper();
+				String jsonString = objectMapper.writeValueAsString(responseObject);
+				
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 				response.setContentType("application/json");
-				response.getWriter().write(e.getMessage());
+				response.getWriter().write(jsonString);
 				return;
 			}
 		} else {
@@ -63,8 +76,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		}
-
 		filterChain.doFilter(request, response);
-
 	}
 }

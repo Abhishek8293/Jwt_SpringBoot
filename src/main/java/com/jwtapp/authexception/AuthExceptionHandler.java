@@ -7,6 +7,8 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import io.jsonwebtoken.MalformedJwtException;
+
 @ControllerAdvice
 public class AuthExceptionHandler {
 
@@ -21,7 +23,7 @@ public class AuthExceptionHandler {
 	public ResponseEntity<Object> handleDisabledException(DisabledException disabledException) {
 		AuthException authException = new AuthException(disabledException.getMessage(), disabledException.getCause(),
 				HttpStatus.UNAUTHORIZED);
-		return new ResponseEntity<>(authException,HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<>(authException, HttpStatus.UNAUTHORIZED);
 	}
 
 }
