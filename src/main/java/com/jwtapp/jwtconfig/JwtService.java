@@ -42,22 +42,6 @@ public class JwtService {
 		return getClaimsFromToken(token, Claims::getExpiration);
 	}
 
-	// extract role from token
-	public Role getRolesFromToken(String token) {
-		Claims claims = getAllClaims(token);
-		List<Object> roles = (List<Object>) claims.get("roles");
-
-		if (roles == null || roles.isEmpty()) {
-			return null; // Handle case where no roles are present
-		}
-
-		// Assuming there's only one role object (modify if different)
-		Map<String, Object> roleMap = (Map<String, Object>) roles.get(0);
-		String authority = (String) roleMap.get("authority");
-
-		return Role.valueOf(authority);
-	}
-
 	// To extract the claims in generic way
 	private <T> T getClaimsFromToken(String token, Function<Claims, T> claimsResolver) {
 		final Claims claims = getAllClaims(token);
@@ -98,21 +82,7 @@ public class JwtService {
 	// To validate the token
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String userNameFromToken = getUsernameFromToken(token);
-		Role userRole = getRolesFromToken(token);
-		Role userDetailRole = getRoleFromUserDetails(userDetails); // New method to extract role from userDetails
-
-		return (userNameFromToken.equals(userDetails.getUsername()) && !isTokenExpired(token) && userRole != null
-				&& userDetailRole != null && userRole.equals(userDetailRole));
-	}
-
-	// Helper method to extract role from UserDetails (assuming a single role)
-	private Role getRoleFromUserDetails(UserDetails userDetails) {
-		List<GrantedAuthority> authorities = (List<GrantedAuthority>) userDetails.getAuthorities();
-		if (authorities.isEmpty()) {
-			return null; // Handle case where no authorities are present (unlikely)
-		}
-		GrantedAuthority authority = authorities.get(0); // Assuming single role, modify if needed
-		return Role.valueOf(authority.getAuthority());
+		return (userNameFromToken.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
 
 }

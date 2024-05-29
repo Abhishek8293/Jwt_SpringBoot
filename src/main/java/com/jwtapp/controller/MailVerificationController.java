@@ -35,11 +35,10 @@ public class MailVerificationController {
 		if (verificationToken == null || now.isAfter(expiryWithBuffer)) {
 			return "Invalid or expired verification token.";
 		}
-
 		User user = verificationToken.getUser();
 		user.setEnabled(true);
 		userRepository.save(user);
-
+		verificationTokenRepository.deleteById(verificationToken.getId());
 		return "Email verified successfully.";
 	}
 
