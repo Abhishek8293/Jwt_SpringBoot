@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -38,22 +37,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String jwtToken = null;
 		String userName = null;
 
-		if (requestHeader != null) {
-			if (requestHeader.startsWith("Bearer")) {
-				jwtToken = requestHeader.substring(7);
+		if (requestHeader != null && requestHeader.startsWith("Bearer")) {
+			jwtToken = requestHeader.substring(7);
+			try {
 				userName = this.jwtService.getUsernameFromToken(jwtToken);
+			} catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+				response.setContentType("application/json");
+				response.getWriter().write(e.getMessage());
+				return;
 			}
 		} else {
 			filterChain.doFilter(request, response);
 			return;
 		}
-		System.out.println("Jwt Token --> "+jwtToken);
-		System.out.println("User Name ---> "+userName);
+
 		if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
 			Boolean validateToken = this.jwtService.validateToken(jwtToken, userDetails);
-			System.out.println("Validation True or False---> "+validateToken);
-			System.out.println(" User Authorities---> "+userDetails.getAuthorities());
 			if (validateToken) {
 				// set the authentication
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
