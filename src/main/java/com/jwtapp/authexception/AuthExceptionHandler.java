@@ -27,11 +27,5 @@ public class AuthExceptionHandler {
 		return new ResponseEntity<>(authException, HttpStatus.UNAUTHORIZED);
 	}
 	
-//	@ExceptionHandler(value = { AccessDeniedException.class })
-//	public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException accessDeniedException) {
-//		AuthException authException = new AuthException(accessDeniedException.getMessage(), accessDeniedException.getCause(),
-//				HttpStatus.FORBIDDEN);
-//		return new ResponseEntity<>(authException, HttpStatus.UNAUTHORIZED);
-//	}
 
 }
