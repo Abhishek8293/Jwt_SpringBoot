@@ -14,10 +14,13 @@ import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,7 +36,7 @@ public class User {
 	private String password;
 	private Role roles;
 	@Column(nullable = false)
-	private boolean enabled;
+	private boolean isActive;
 
 	@OneToOne(mappedBy = "user")
 	@JsonIgnore
