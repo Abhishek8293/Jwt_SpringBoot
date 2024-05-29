@@ -1,4 +1,4 @@
-package com.jwtapp.exception;
+package com.jwtapp.authexception;
 
 public class MissingJwtTokenException extends RuntimeException {
 
