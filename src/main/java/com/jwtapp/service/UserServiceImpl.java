@@ -8,12 +8,12 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.jwtapp.authexception.userexception.UserNotFoundException;
 import com.jwtapp.dto.UserRegistrationDto;
 import com.jwtapp.dto.UserUpdateDto;
 import com.jwtapp.mail.MailServiceImpl;
 import com.jwtapp.user.User;
 import com.jwtapp.user.UserRepository;
+import com.jwtapp.userexception.UserNotFoundException;
 import com.jwtapp.verificationtoken.VerificationToken;
 import com.jwtapp.verificationtoken.VerificationTokenRepository;
 

@@ -1,4 +1,4 @@
-package com.jwtapp.authexception.userexception;
+package com.jwtapp.userexception;
 
 public class UserNotFoundException extends RuntimeException {
 
