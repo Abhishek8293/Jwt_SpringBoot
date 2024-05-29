@@ -26,7 +26,6 @@ public class MailVerificationController {
 	@GetMapping("/verify/{token}")
 	public String verifyUser(@PathVariable String token) {
 
-		System.out.println("-------> INSIDE THE VERIFY USER REST API <--------");
 		VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
 
 		LocalDateTime now = LocalDateTime.now();

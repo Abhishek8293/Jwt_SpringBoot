@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin")
 public class AdminController {
 
+	
 	@GetMapping
+	//@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Object> afterLoginSuccessUser() {
 		return new ResponseEntity<Object>("Welcome to home page --- SUCCESSFULL AUTHENTICATION ADMIN---", HttpStatus.OK);
 	}
