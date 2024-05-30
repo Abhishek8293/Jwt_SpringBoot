@@ -1,15 +1,7 @@
 package com.jwtapp.controller;
 
-import java.time.LocalDateTime;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,13 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jwtapp.dto.LoginRequest;
-import com.jwtapp.jwtconfig.JwtService;
 import com.jwtapp.response.ResponseHandler;
-import com.jwtapp.user.CustomUserDetailsService;
-import com.jwtapp.user.User;
-import com.jwtapp.user.UserRepository;
-import com.jwtapp.verificationtoken.VerificationToken;
-import com.jwtapp.verificationtoken.VerificationTokenRepository;
+import com.jwtapp.service.AuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,58 +22,25 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 public class AuthController {
 
-	private final JwtService jwtService;
-
-	private final AuthenticationManager authenticationManager;
-
-	private final CustomUserDetailsService customUserDetailsService;
-
-	private final VerificationTokenRepository verificationTokenRepository;
-
-	private final UserRepository userRepository;
+	private final AuthService authService;
 
 	@Transactional
 	@GetMapping("/verify/{token}")
 	public ResponseEntity<Object> verifyUser(@PathVariable String token) {
-		VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime expiryWithBuffer = verificationToken.getExpiryDate().plusSeconds(60);
-
-		if (verificationToken == null || now.isAfter(expiryWithBuffer)) {
-			return ResponseHandler.responseBuilder("Invalid or expired verification token.", HttpStatus.BAD_REQUEST,
-					null);
-		}
-		User user = verificationToken.getUser();
-		user.setActive(true);
-		userRepository.save(user);
-		verificationTokenRepository.deleteById(verificationToken.getId());
+		authService.verifyUser(token);
 		return ResponseHandler.responseBuilder("Email verified successfully.", HttpStatus.OK, null);
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest loginRequest) {
-
-		// authenticating the username and password with database
-		doAuthenticate(loginRequest.getUserName(), loginRequest.getPassword());
-
-		// if authenticated get the user by username
-		UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getUserName());
-
-		// Now generate the JWT token
-		String jwtToken = jwtService.generateToken(userDetails);
-		return new ResponseEntity<Object>(jwtToken, HttpStatus.OK);
+		String jwtToken = authService.login(loginRequest);
+		return ResponseHandler.responseBuilder("Successfully logged in", HttpStatus.OK, jwtToken);
 	}
 
-	private void doAuthenticate(String email, String password) {
-		try {
-			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,
-					password);
-			authenticationManager.authenticate(authenticationToken);
-		} catch (BadCredentialsException e) {
-			throw new BadCredentialsException("Invalid Username or Password !!");
-		} catch (DisabledException e) {
-			throw new DisabledException("Please verify the email !!");
-		}
+	@GetMapping("/resend/{email}")
+	public ResponseEntity<Object> resendVerificationEmail() {
+		authService.resendVerificationEmail();
+		return ResponseHandler.responseBuilder(null, null, null);
 	}
 
 }

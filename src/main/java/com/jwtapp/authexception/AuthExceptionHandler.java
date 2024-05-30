@@ -30,7 +30,15 @@ public class AuthExceptionHandler {
 				HttpStatus.UNAUTHORIZED);
 		return new ResponseEntity<>(authException, HttpStatus.UNAUTHORIZED);
 	}
-	
+
+	@ExceptionHandler(value = { verificationTokenExpiredException.class })
+	public ResponseEntity<Object> handleVerificationTokenExpiredException(
+			verificationTokenExpiredException verificationTokenExpiredException) {
+		AuthException authException = new AuthException(verificationTokenExpiredException.getMessage(),
+				verificationTokenExpiredException.getCause(), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(authException,HttpStatus.BAD_REQUEST);
+	}
+
 	@ExceptionHandler(value = { MethodArgumentNotValidException.class })
 	public ResponseEntity<Object> handleMethodArgumentNotValidException(
 			MethodArgumentNotValidException methodArgumentNotValidException) {
@@ -45,6 +53,5 @@ public class AuthExceptionHandler {
 
 		return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
 	}
-	
 
 }

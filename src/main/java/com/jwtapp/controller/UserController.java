@@ -32,7 +32,7 @@ public class UserController {
 	@PostMapping
 	public ResponseEntity<Object> registerUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto) {
 		User registeredUser = userServiceImpl.registerUser(userRegistrationDto);
-		return ResponseHandler.responseBuilder("User " + registeredUser.getUserName() + " is successfully registered.",
+		return ResponseHandler.responseBuilder("User " + registeredUser.getUserName() + " is successfully registered. PLEASE VERIFY YOUR EMAIL",
 				HttpStatus.CREATED, registeredUser);
 	}
 
