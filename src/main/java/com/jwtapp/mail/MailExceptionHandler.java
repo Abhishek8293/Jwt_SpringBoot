@@ -1,4 +1,4 @@
-package com.jwtapp.service;
+package com.jwtapp.mail;
 
 import java.util.HashMap;
 import java.util.Map;
