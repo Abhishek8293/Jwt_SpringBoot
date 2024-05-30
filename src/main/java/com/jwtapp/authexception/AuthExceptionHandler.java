@@ -34,13 +34,14 @@ public class AuthExceptionHandler {
 	@ExceptionHandler(value = { MethodArgumentNotValidException.class })
 	public ResponseEntity<Object> handleMethodArgumentNotValidException(
 			MethodArgumentNotValidException methodArgumentNotValidException) {
-		Map<String, String> responseMap = new HashMap<>();
+		Map<String, Object> responseMap = new HashMap<>();
 		List<ObjectError> erroList = methodArgumentNotValidException.getBindingResult().getAllErrors();
 		for (ObjectError error : erroList) {
 			String fieldName = ((FieldError) error).getField();
 			String messageString = error.getDefaultMessage();
 			responseMap.put(fieldName, messageString);
 		}
+		responseMap.put("httpStatus", HttpStatus.BAD_REQUEST);
 
 		return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
 	}
