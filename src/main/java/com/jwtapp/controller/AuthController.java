@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jwtapp.dto.LoginRequest;
 import com.jwtapp.response.ResponseHandler;
-import com.jwtapp.service.AuthService;
+import com.jwtapp.service.AuthServiceImpl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,24 +22,24 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 public class AuthController {
 
-	private final AuthService authService;
+	private final AuthServiceImpl authServiceImpl;
 
 	@Transactional
 	@GetMapping("/verify/{token}")
 	public ResponseEntity<Object> verifyUser(@PathVariable String token) {
-		authService.verifyUser(token);
+		authServiceImpl.verifyUser(token);
 		return ResponseHandler.responseBuilder("Email verified successfully.", HttpStatus.OK, null);
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest loginRequest) {
-		String jwtToken = authService.login(loginRequest);
+		String jwtToken = authServiceImpl.login(loginRequest);
 		return ResponseHandler.responseBuilder("Successfully logged in", HttpStatus.OK, jwtToken);
 	}
 
 	@GetMapping("/resend/{email}")
 	public ResponseEntity<Object> resendVerificationEmail() {
-		authService.resendVerificationEmail();
+		authServiceImpl.resendVerificationEmail();
 		return ResponseHandler.responseBuilder(null, null, null);
 	}
 
