@@ -27,6 +27,7 @@ import com.jwtapp.user.UserRepository;
 import com.jwtapp.verificationtoken.VerificationToken;
 import com.jwtapp.verificationtoken.VerificationTokenRepository;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -63,7 +64,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest loginRequest) {
 
 		// authenticating the username and password with database
 		doAuthenticate(loginRequest.getUserName(), loginRequest.getPassword());

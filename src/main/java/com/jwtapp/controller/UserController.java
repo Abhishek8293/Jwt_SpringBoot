@@ -19,6 +19,7 @@ import com.jwtapp.response.ResponseHandler;
 import com.jwtapp.service.UserServiceImpl;
 import com.jwtapp.user.User;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,7 +30,7 @@ public class UserController {
 	private final UserServiceImpl userServiceImpl;
 
 	@PostMapping
-	public ResponseEntity<Object> registerUser(@RequestBody UserRegistrationDto userRegistrationDto) {
+	public ResponseEntity<Object> registerUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto) {
 		User registeredUser = userServiceImpl.registerUser(userRegistrationDto);
 		return ResponseHandler.responseBuilder("User " + registeredUser.getUserName() + " is successfully registered.",
 				HttpStatus.CREATED, registeredUser);
@@ -55,7 +56,7 @@ public class UserController {
 	}
 
 	@PutMapping("{email}")
-	public ResponseEntity<Object> updateUserByEmail(@RequestBody UserUpdateDto updateDto, @PathVariable String email) {
+	public ResponseEntity<Object> updateUserByEmail(@Valid @RequestBody UserUpdateDto updateDto, @PathVariable String email) {
 		User savedUser = userServiceImpl.updateUserByEmail(updateDto, email);
 		return ResponseHandler.responseBuilder("User " + savedUser.getUserName() + " is successfully updated.",
 				HttpStatus.OK, savedUser);

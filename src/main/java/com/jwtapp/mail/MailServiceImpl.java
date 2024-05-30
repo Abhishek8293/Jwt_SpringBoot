@@ -30,4 +30,10 @@ public class MailServiceImpl implements MailService {
 		javaMailSender.send(message);
 	}
 
+	@Override
+	public void sendeMimeMessage(String to, String subject, String text) {
+		
+		
+	}
+
 }

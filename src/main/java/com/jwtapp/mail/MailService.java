@@ -6,6 +6,10 @@ public interface MailService {
 	
 	void sendSimpleMessage(String to,String subject,String text);
 	
+	void sendeMimeMessage(String to,String subject,String text);
+	
 	void sendVerificationMail(User user,String token);
+	
+	
 
 }

@@ -1,14 +1,18 @@
 package com.jwtapp.authexception;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import io.jsonwebtoken.MalformedJwtException;
 
 @ControllerAdvice
 public class AuthExceptionHandler {
@@ -25,6 +29,20 @@ public class AuthExceptionHandler {
 		AuthException authException = new AuthException(disabledException.getMessage(), disabledException.getCause(),
 				HttpStatus.UNAUTHORIZED);
 		return new ResponseEntity<>(authException, HttpStatus.UNAUTHORIZED);
+	}
+	
+	@ExceptionHandler(value = { MethodArgumentNotValidException.class })
+	public ResponseEntity<Object> handleMethodArgumentNotValidException(
+			MethodArgumentNotValidException methodArgumentNotValidException) {
+		Map<String, String> responseMap = new HashMap<>();
+		List<ObjectError> erroList = methodArgumentNotValidException.getBindingResult().getAllErrors();
+		for (ObjectError error : erroList) {
+			String fieldName = ((FieldError) error).getField();
+			String messageString = error.getDefaultMessage();
+			responseMap.put(fieldName, messageString);
+		}
+
+		return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
 	}
 	
 
