@@ -1,10 +1,10 @@
 package com.jwtapp.service;
 
-import com.jwtapp.dto.LoginRequest;
+import com.jwtapp.dto.LoginRequestDto;
 
 public interface AuthService {
 	
-	String login(LoginRequest loginRequest);
+	String login(LoginRequestDto loginRequest);
 	
 	void verifyUser(String token);
 

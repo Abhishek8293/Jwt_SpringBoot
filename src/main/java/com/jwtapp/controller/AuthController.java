@@ -2,7 +2,6 @@ package com.jwtapp.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jwtapp.dto.LoginRequest;
+import com.jwtapp.dto.LoginRequestDto;
 import com.jwtapp.response.ResponseHandler;
 import com.jwtapp.service.AuthServiceImpl;
 
@@ -24,7 +23,7 @@ public class AuthController {
 
 	private final AuthServiceImpl authServiceImpl;
 
-	@Transactional
+
 	@GetMapping("/verify/{token}")
 	public ResponseEntity<Object> verifyUser(@PathVariable String token) {
 		authServiceImpl.verifyUser(token);
@@ -32,7 +31,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<Object> login(@Valid @RequestBody LoginRequestDto loginRequest) {
 		String jwtToken = authServiceImpl.login(loginRequest);
 		return ResponseHandler.responseBuilder("Successfully logged in", HttpStatus.OK, jwtToken);
 	}

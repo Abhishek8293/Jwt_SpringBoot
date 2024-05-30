@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.jwtapp.authexception.verificationTokenExpiredException;
-import com.jwtapp.dto.LoginRequest;
+import com.jwtapp.dto.LoginRequestDto;
 import com.jwtapp.jwtconfig.JwtService;
 import com.jwtapp.mail.MailServiceImpl;
 import com.jwtapp.response.ResponseHandler;
@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
 
 	private final MailServiceImpl mailServiceImpl;
 
-	public String login(LoginRequest loginRequest) {
+	public String login(LoginRequestDto loginRequest) {
 		// authenticating the username and password with database
 		doAuthenticate(loginRequest.getUserName(), loginRequest.getPassword());
 		// if authenticated get the user by username
