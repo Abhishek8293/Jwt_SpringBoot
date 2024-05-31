@@ -1,4 +1,4 @@
-package com.jwtapp.jwtconfig;
+package com.jwtapp.securityconfig;
 
 import java.security.Key;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.jwtapp.user.Role;
+import com.jwtapp.entity.Role;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

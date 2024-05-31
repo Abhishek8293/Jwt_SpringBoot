@@ -17,23 +17,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.jwtapp.jwtconfig.CustomAccessDeniedHandler;
-import com.jwtapp.jwtconfig.JwtAuthenticationEntryPoint;
-import com.jwtapp.jwtconfig.JwtAuthenticationFilter;
-import com.jwtapp.user.CustomUserDetailsService;
-import com.jwtapp.user.Role;
-import com.jwtapp.user.UserRepository;
+import com.jwtapp.entity.Role;
+import com.jwtapp.repository.UserRepository;
 
 @Configuration
 @EnableWebSecurity
 //@EnableMethodSecurity
-public class SecurityConfiguration {
+public class CustomSecurityConfiguration {
 
 	@Autowired
-	private JwtAuthenticationFilter filter;
+	private CustomAuthenticationFilter filter;
 
 	@Autowired
-	private JwtAuthenticationEntryPoint point;
+	private CustomAuthenticationEntryPoint point;
 	
 	@Autowired
 	private CustomAccessDeniedHandler customAccessDeniedHandler;

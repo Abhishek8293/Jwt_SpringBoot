@@ -14,15 +14,15 @@ import org.springframework.stereotype.Service;
 
 import com.jwtapp.authexception.verificationTokenExpiredException;
 import com.jwtapp.dto.LoginRequestDto;
-import com.jwtapp.jwtconfig.JwtService;
+import com.jwtapp.entity.User;
+import com.jwtapp.entity.VerificationToken;
 import com.jwtapp.mail.MailServiceImpl;
+import com.jwtapp.repository.UserRepository;
+import com.jwtapp.repository.VerificationTokenRepository;
 import com.jwtapp.response.ResponseHandler;
-import com.jwtapp.user.CustomUserDetailsService;
-import com.jwtapp.user.User;
-import com.jwtapp.user.UserRepository;
+import com.jwtapp.securityconfig.CustomUserDetailsService;
+import com.jwtapp.securityconfig.JwtService;
 import com.jwtapp.userexception.UserNotFoundException;
-import com.jwtapp.verificationtoken.VerificationToken;
-import com.jwtapp.verificationtoken.VerificationTokenRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,6 +42,8 @@ public class AuthServiceImpl implements AuthService {
 
 	private final MailServiceImpl mailServiceImpl;
 
+	private final CustomUserDetailsService userDetailsService;
+
 	@Override
 	public String login(LoginRequestDto loginRequest) {
 		// authenticating the username and password with database
@@ -55,11 +57,15 @@ public class AuthServiceImpl implements AuthService {
 
 	private void doAuthenticate(String email, String password) {
 		try {
+//			UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+//			if (!userDetails.isEnabled()) {
+//				throw new DisabledException("Please verify your email: " + email + "!!");
+//			}
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,
 					password);
 			authenticationManager.authenticate(authenticationToken);
 		} catch (BadCredentialsException e) {
-			throw new BadCredentialsException("Invalid Username or Password !!");
+			throw new BadCredentialsException("Incorrect Username or Password !!");
 		} catch (DisabledException e) {
 			throw new DisabledException("Please verify your email : " + email + "!!");
 		}
@@ -88,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		User existingUser = user.get();
-		//deleting the already existed verification token.
+		// deleting the already existed verification token.
 		verificationTokenRepository.deleteByUserId(existingUser.getUserId());
 		// Generate Verification Token
 		String token = UUID.randomUUID().toString();

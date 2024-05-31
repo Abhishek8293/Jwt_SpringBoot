@@ -1,6 +1,7 @@
-package com.jwtapp.jwtconfig;
+package com.jwtapp.securityconfig;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,19 +22,20 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException) throws IOException, ServletException {
-		//creating a map object for desired response
-		Map<String, Object> responseObject= new HashMap<>();
+		// creating a map object for desired response
+		Map<String, Object> responseObject = new HashMap<>();
 		responseObject.put("message", "Access Denied! You do not have permission to access this resource.");
 		responseObject.put("httpStatus", HttpStatus.UNAUTHORIZED);
-		
-		//Converting object to json using ObjectMapper 
+		responseObject.put("timestamp", LocalDateTime.now());
+
+		// Converting object to JSON using ObjectMapper
 		ObjectMapper objectMapper = new ObjectMapper();
 		String jsonString = objectMapper.writeValueAsString(responseObject);
-		
+
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		response.setContentType("application/json");
 		response.getWriter().write(jsonString);
-		
+
 	}
 
 }

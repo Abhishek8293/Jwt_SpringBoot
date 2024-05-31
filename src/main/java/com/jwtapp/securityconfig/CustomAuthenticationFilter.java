@@ -1,6 +1,7 @@
-package com.jwtapp.jwtconfig;
+package com.jwtapp.securityconfig;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jwtapp.user.CustomUserDetailsService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtService jwtService;
 
@@ -45,16 +45,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			try {
 				userName = this.jwtService.getUsernameFromToken(jwtToken);
 			} catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
-				
-				//creating a map object for desired response
-				Map<String, Object> responseObject= new HashMap<>();
+
+				// creating a map object for desired response
+				Map<String, Object> responseObject = new HashMap<>();
 				responseObject.put("message", e.getMessage());
 				responseObject.put("httpStatus", HttpStatus.UNAUTHORIZED);
-				
-				//Converting object to json using ObjectMapper 
+				responseObject.put("timestamp", LocalDateTime.now());
+
+				// Converting object to json using ObjectMapper
 				ObjectMapper objectMapper = new ObjectMapper();
 				String jsonString = objectMapper.writeValueAsString(responseObject);
-				
+
 				response.setStatus(HttpStatus.UNAUTHORIZED.value());
 				response.setContentType("application/json");
 				response.getWriter().write(jsonString);

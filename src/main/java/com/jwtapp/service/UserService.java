@@ -3,7 +3,7 @@ package com.jwtapp.service;
 import java.util.List;
 import com.jwtapp.dto.UserRegistrationDto;
 import com.jwtapp.dto.UserUpdateDto;
-import com.jwtapp.user.User;
+import com.jwtapp.entity.User;
 
 public interface UserService {
 	

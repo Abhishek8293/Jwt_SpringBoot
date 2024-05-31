@@ -1,4 +1,4 @@
-package com.jwtapp.user;
+package com.jwtapp.entity;
 
 public enum Role {
 	ADMIN, USER

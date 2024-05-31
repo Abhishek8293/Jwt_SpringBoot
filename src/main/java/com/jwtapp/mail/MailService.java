@@ -1,6 +1,6 @@
 package com.jwtapp.mail;
 
-import com.jwtapp.user.User;
+import com.jwtapp.entity.User;
 
 import jakarta.mail.MessagingException;
 

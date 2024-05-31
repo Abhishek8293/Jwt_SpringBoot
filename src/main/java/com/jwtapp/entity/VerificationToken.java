@@ -1,45 +1,44 @@
-package com.jwtapp.user;
+package com.jwtapp.entity;
+
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.jwtapp.verificationtoken.VerificationToken;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class User {
+@AllArgsConstructor
+@Table(name = "user_verification_table")
+public class VerificationToken {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer userId;
-	private String userName;
-	@Column(nullable = false, unique = true)
-	private String email;
-	@Column(nullable = false)
-	private String password;
-	private Role roles;
-	@Column(nullable = false)
-	private boolean isActive;
+	private Integer id;
 
-	@OneToOne(mappedBy = "user")
+	@Column(nullable = false, unique = true)
+	private String token;
+
+	@Column(nullable = false)
+	private LocalDateTime expiryDate;
+
+	@OneToOne
+	@JoinColumn(name = "user_fk_id")
 	@JsonIgnore
-	private VerificationToken verificationTokens;
+	private User user;
 
 }

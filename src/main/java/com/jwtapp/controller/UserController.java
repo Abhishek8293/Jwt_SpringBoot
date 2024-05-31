@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jwtapp.dto.UserRegistrationDto;
 import com.jwtapp.dto.UserUpdateDto;
+import com.jwtapp.entity.User;
 import com.jwtapp.response.ResponseHandler;
 import com.jwtapp.service.UserServiceImpl;
-import com.jwtapp.user.User;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

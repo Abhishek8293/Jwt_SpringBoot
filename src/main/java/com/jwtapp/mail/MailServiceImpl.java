@@ -6,7 +6,7 @@ import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.jwtapp.user.User;
+import com.jwtapp.entity.User;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

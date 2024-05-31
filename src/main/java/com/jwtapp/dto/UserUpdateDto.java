@@ -1,6 +1,6 @@
 package com.jwtapp.dto;
 
-import com.jwtapp.user.Role;
+import com.jwtapp.entity.Role;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;

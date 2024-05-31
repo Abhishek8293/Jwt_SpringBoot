@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.jwtapp.dto.UserRegistrationDto;
 import com.jwtapp.dto.UserUpdateDto;
+import com.jwtapp.entity.User;
+import com.jwtapp.entity.VerificationToken;
 import com.jwtapp.mail.MailServiceImpl;
-import com.jwtapp.user.User;
-import com.jwtapp.user.UserRepository;
+import com.jwtapp.repository.UserRepository;
+import com.jwtapp.repository.VerificationTokenRepository;
 import com.jwtapp.userexception.UserNotFoundException;
-import com.jwtapp.verificationtoken.VerificationToken;
-import com.jwtapp.verificationtoken.VerificationTokenRepository;
 
 import lombok.RequiredArgsConstructor;
 
