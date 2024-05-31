@@ -30,33 +30,33 @@ public class UserController {
 	private final UserServiceImpl userServiceImpl;
 
 	@PostMapping
-	public ResponseEntity<Object> registerUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto) {
+	public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto) {
 		User registeredUser = userServiceImpl.registerUser(userRegistrationDto);
 		return ResponseHandler.responseBuilder("User " + registeredUser.getUserName() + " is successfully registered. PLEASE VERIFY YOUR EMAIL",
 				HttpStatus.CREATED, registeredUser);
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> getAllUser() {
+	public ResponseEntity<?> getAllUser() {
 		List<User> usrList = userServiceImpl.getAllUser();
 		return ResponseHandler.responseBuilder("All registred user", HttpStatus.OK, usrList);
 	}
 
 	@GetMapping("{email}")
-	public ResponseEntity<Object> getUserByEmail(@PathVariable String email) {
+	public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
 		User user = userServiceImpl.getUserByEmail(email);
 		return ResponseHandler.responseBuilder("Requested user", HttpStatus.OK, user);
 	}
 
 	@DeleteMapping("{email}")
-	public ResponseEntity<Object> deleteUserByEmail(@PathVariable String email) {
+	public ResponseEntity<?> deleteUserByEmail(@PathVariable String email) {
 		userServiceImpl.deleteUserByEmail(email);
 		return ResponseHandler.responseBuilder("User with email " + email + " is successfully deleted.", HttpStatus.OK,
 				null);
 	}
 
 	@PutMapping("{email}")
-	public ResponseEntity<Object> updateUserByEmail(@Valid @RequestBody UserUpdateDto updateDto, @PathVariable String email) {
+	public ResponseEntity<?> updateUserByEmail(@Valid @RequestBody UserUpdateDto updateDto, @PathVariable String email) {
 		User savedUser = userServiceImpl.updateUserByEmail(updateDto, email);
 		return ResponseHandler.responseBuilder("User " + savedUser.getUserName() + " is successfully updated.",
 				HttpStatus.OK, savedUser);

@@ -25,21 +25,21 @@ public class AuthController {
 
 
 	@GetMapping("/verify/{token}")
-	public ResponseEntity<Object> verifyUser(@PathVariable String token) {
+	public ResponseEntity<?> verifyUser(@PathVariable String token) {
 		authServiceImpl.verifyUser(token);
 		return ResponseHandler.responseBuilder("Email verified successfully.", HttpStatus.OK, null);
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Object> login(@Valid @RequestBody LoginRequestDto loginRequest) {
+	public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto loginRequest) {
 		String jwtToken = authServiceImpl.login(loginRequest);
 		return ResponseHandler.responseBuilder("Successfully logged in", HttpStatus.OK, jwtToken);
 	}
 
 	@GetMapping("/resend/{email}")
-	public ResponseEntity<Object> resendVerificationEmail() {
-		authServiceImpl.resendVerificationEmail();
-		return ResponseHandler.responseBuilder(null, null, null);
+	public ResponseEntity<?> resendVerificationEmail(@PathVariable String email) {
+		authServiceImpl.resendVerificationEmail(email);
+		return ResponseHandler.responseBuilder("Verification mail is sent to : "+email, HttpStatus.OK, null);
 	}
 
 }

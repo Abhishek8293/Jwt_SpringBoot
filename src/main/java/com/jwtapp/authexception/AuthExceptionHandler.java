@@ -1,16 +1,13 @@
 package com.jwtapp.authexception;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -18,40 +15,30 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class AuthExceptionHandler {
 
 	@ExceptionHandler(value = { BadCredentialsException.class })
-	public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException badCredentialsException) {
-		AuthException authException = new AuthException(badCredentialsException.getMessage(),
-				badCredentialsException.getCause(), HttpStatus.UNAUTHORIZED);
-		return new ResponseEntity<>(authException, HttpStatus.UNAUTHORIZED);
+	public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException ex) {
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("error", ex.getMessage());
+		responseBody.put("httpStatus", HttpStatus.UNAUTHORIZED);
+		responseBody.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody);
 	}
 
 	@ExceptionHandler(value = { DisabledException.class })
-	public ResponseEntity<Object> handleDisabledException(DisabledException disabledException) {
-		AuthException authException = new AuthException(disabledException.getMessage(), disabledException.getCause(),
-				HttpStatus.UNAUTHORIZED);
-		return new ResponseEntity<>(authException, HttpStatus.UNAUTHORIZED);
+	public ResponseEntity<?> handleDisabledException(DisabledException ex) {
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("error", ex.getMessage());
+		responseBody.put("httpStatus", HttpStatus.UNAUTHORIZED);
+		responseBody.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody);
 	}
 
 	@ExceptionHandler(value = { verificationTokenExpiredException.class })
-	public ResponseEntity<Object> handleVerificationTokenExpiredException(
-			verificationTokenExpiredException verificationTokenExpiredException) {
-		AuthException authException = new AuthException(verificationTokenExpiredException.getMessage(),
-				verificationTokenExpiredException.getCause(), HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(authException,HttpStatus.BAD_REQUEST);
-	}
-
-	@ExceptionHandler(value = { MethodArgumentNotValidException.class })
-	public ResponseEntity<Object> handleMethodArgumentNotValidException(
-			MethodArgumentNotValidException methodArgumentNotValidException) {
-		Map<String, Object> responseMap = new HashMap<>();
-		List<ObjectError> erroList = methodArgumentNotValidException.getBindingResult().getAllErrors();
-		for (ObjectError error : erroList) {
-			String fieldName = ((FieldError) error).getField();
-			String messageString = error.getDefaultMessage();
-			responseMap.put(fieldName, messageString);
-		}
-		responseMap.put("httpStatus", HttpStatus.BAD_REQUEST);
-
-		return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+	public ResponseEntity<Object> handleVerificationTokenExpiredException(verificationTokenExpiredException ex) {
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("error", ex.getMessage());
+		responseBody.put("httpStatus", HttpStatus.UNAUTHORIZED);
+		responseBody.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody);
 	}
 
 }

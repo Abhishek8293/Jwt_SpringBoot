@@ -1,6 +1,8 @@
 package com.jwtapp.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +20,7 @@ import com.jwtapp.response.ResponseHandler;
 import com.jwtapp.user.CustomUserDetailsService;
 import com.jwtapp.user.User;
 import com.jwtapp.user.UserRepository;
+import com.jwtapp.userexception.UserNotFoundException;
 import com.jwtapp.verificationtoken.VerificationToken;
 import com.jwtapp.verificationtoken.VerificationTokenRepository;
 
@@ -39,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
 
 	private final MailServiceImpl mailServiceImpl;
 
+	@Override
 	public String login(LoginRequestDto loginRequest) {
 		// authenticating the username and password with database
 		doAuthenticate(loginRequest.getUserName(), loginRequest.getPassword());
@@ -61,6 +65,7 @@ public class AuthServiceImpl implements AuthService {
 		}
 	}
 
+	@Override
 	public void verifyUser(String token) {
 		VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
 		LocalDateTime now = LocalDateTime.now();
@@ -75,8 +80,24 @@ public class AuthServiceImpl implements AuthService {
 		verificationTokenRepository.deleteById(verificationToken.getId());
 	}
 
-	public void resendVerificationEmail() {
-		mailServiceImpl.sendVerificationMail(null, null);
+	@Override
+	public void resendVerificationEmail(String email) {
+		Optional<User> user = userRepository.findByEmail(email);
+		if (user.isEmpty()) {
+			throw new UserNotFoundException("Please provide an already registerd email.");
+		}
+
+		User existingUser = user.get();
+		//deleting the already existed verification token.
+		verificationTokenRepository.deleteByUserId(existingUser.getUserId());
+		// Generate Verification Token
+		String token = UUID.randomUUID().toString();
+		// Save Token
+		VerificationToken verificationToken = VerificationToken.builder().token(token).expiryDate(LocalDateTime.now())
+				.user(existingUser).build();
+		verificationTokenRepository.save(verificationToken);
+		mailServiceImpl.sendVerificationMail(existingUser, token);
+
 	}
 
 }
