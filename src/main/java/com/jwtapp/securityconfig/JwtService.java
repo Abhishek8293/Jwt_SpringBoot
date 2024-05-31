@@ -84,5 +84,12 @@ public class JwtService {
 		final String userNameFromToken = getUsernameFromToken(token);
 		return (userNameFromToken.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
+	
+	//take AuthHeader and return the username
+	public String getUsernameFromAuthHeader(String authHeader) {
+		String jwtToken = authHeader.substring(7);
+		String userName = getUsernameFromToken(jwtToken);
+		return userName;
+	}
 
 }

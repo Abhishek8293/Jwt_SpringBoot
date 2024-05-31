@@ -1,5 +1,6 @@
 package com.jwtapp.mail;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ public class MailExceptionHandler {
 		response.put("message", messagingException.getMessage());
 		response.put("throwable", messagingException.getCause());
 		response.put("httpStatus", HttpStatus.BAD_REQUEST);
+		response.put("timestamp", LocalDateTime.now());
 		return new ResponseEntity<Object>(response,HttpStatus.BAD_REQUEST);
 	}
 

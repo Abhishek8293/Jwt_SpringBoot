@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.jwtapp.dto.ChangePasswordDto;
 import com.jwtapp.dto.UserRegistrationDto;
 import com.jwtapp.dto.UserUpdateDto;
 import com.jwtapp.entity.User;
@@ -15,6 +16,8 @@ import com.jwtapp.entity.VerificationToken;
 import com.jwtapp.mail.MailServiceImpl;
 import com.jwtapp.repository.UserRepository;
 import com.jwtapp.repository.VerificationTokenRepository;
+import com.jwtapp.securityconfig.JwtService;
+import com.jwtapp.userexception.IncorrectCurrentPasswordException;
 import com.jwtapp.userexception.UserNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,8 @@ public class UserServiceImpl implements UserService {
 	private final PasswordEncoder passwordEncoder;
 
 	private final MailServiceImpl mailServiceImpl;
+
+	private final JwtService jwtService;
 
 	@Override
 	public User registerUser(UserRegistrationDto userRegistrationDto) {
@@ -70,28 +75,46 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void deleteUserByEmail(String email) {
-		Optional<User> user = userRepository.findByEmail(email);
-		if (user.isEmpty()) {
-			throw new UserNotFoundException("Requested user does not exist.");
-		}
-		userRepository.deleteById(user.get().getUserId());
-	}
-
-	@Override
-	public User updateUserByEmail(UserUpdateDto userUpdateDto, String email) {
-		Optional<User> user = userRepository.findByEmail(email);
+	public String deleteUserByEmail(String authHeader) {
+		String username = jwtService.getUsernameFromAuthHeader(authHeader);
+		Optional<User> user = userRepository.findByEmail(username);
 		if (user.isEmpty()) {
 			throw new UserNotFoundException("Requested user does not exist.");
 		}
 		User existingUser = user.get();
-		existingUser.builder()
-		.userName(userUpdateDto.getUserName())
-		.email(userUpdateDto.getEmail())
-		.password(userUpdateDto.getPassword())
-		.build();
+		userRepository.deleteById(existingUser.getUserId());
+		return existingUser.getEmail();
+	}
+
+	@Override
+	public User updateUserByEmail(UserUpdateDto userUpdateDto, String authHeader) {
+		String username = jwtService.getUsernameFromAuthHeader(authHeader);
+		Optional<User> user = userRepository.findByEmail(username);
+		if (user.isEmpty()) {
+			throw new UserNotFoundException("Requested user does not exist.");
+		}
+		User existingUser = user.get();
+		existingUser.builder().userName(userUpdateDto.getUserName()).email(userUpdateDto.getEmail()).build();
 		User savedUser = userRepository.save(existingUser);
 		return savedUser;
 	}
+
+	@Override
+	public void changePassword(ChangePasswordDto changePasswordDto, String authHeader) {
+		String username = jwtService.getUsernameFromAuthHeader(authHeader);
+		Optional<User> user = userRepository.findByEmail(username);
+		if (user.isEmpty()) {
+			throw new UserNotFoundException("Requested user does not exist.");
+		}
+
+		User existingUser = user.get();
+		if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), existingUser.getPassword())) {
+			throw new IncorrectCurrentPasswordException("Given current password is incorrect.");
+		}
+		existingUser.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+		userRepository.save(existingUser);
+
+	}
+	
 
 }

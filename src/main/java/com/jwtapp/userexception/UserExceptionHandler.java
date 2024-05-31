@@ -41,4 +41,13 @@ public class UserExceptionHandler {
 		responseBody.put("timestamp", LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody);
 	}
+	
+	@ExceptionHandler(value = {IncorrectCurrentPasswordException.class})
+	public ResponseEntity<?> handleIncorrectCurrentPasswordException(IncorrectCurrentPasswordException ex){
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("error", ex.getMessage());
+		responseBody.put("httpStatus", HttpStatus.BAD_REQUEST);
+		responseBody.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+	}
 }
