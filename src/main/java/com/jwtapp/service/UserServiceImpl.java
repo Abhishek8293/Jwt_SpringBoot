@@ -18,6 +18,7 @@ import com.jwtapp.repository.UserRepository;
 import com.jwtapp.repository.VerificationTokenRepository;
 import com.jwtapp.securityconfig.JwtService;
 import com.jwtapp.userexception.IncorrectCurrentPasswordException;
+import com.jwtapp.userexception.UserAlreadyExistsException;
 import com.jwtapp.userexception.UserNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User registerUser(UserRegistrationDto userRegistrationDto) {
+		Optional<User> existingUser = userRepository.findByEmail(userRegistrationDto.getEmail());
+		if(existingUser.isPresent()) {
+			throw new UserAlreadyExistsException("User with email "+userRegistrationDto.getEmail()+" is already registered.");
+		}
 
 		// Save User with inactive status
 		User newUser = User.builder().userName(userRegistrationDto.getUserName()).email(userRegistrationDto.getEmail())
@@ -49,7 +54,7 @@ public class UserServiceImpl implements UserService {
 		String token = UUID.randomUUID().toString();
 
 		// Save Token
-		VerificationToken verificationToken = VerificationToken.builder().token(token).expiryDate(LocalDateTime.now())
+		VerificationToken verificationToken = VerificationToken.builder().token(token).creationDateTime(LocalDateTime.now())
 				.user(newUser).build();
 		verificationTokenRepository.save(verificationToken);
 
@@ -66,8 +71,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUserByEmail(String email) {
-		Optional<User> user = userRepository.findByEmail(email);
+	public User getUserByEmail(String authHeader) {
+		String username = jwtService.getUsernameFromAuthHeader(authHeader);
+		Optional<User> user = userRepository.findByEmail(username);
 		if (user.isEmpty()) {
 			throw new UserNotFoundException("Requested user does not exist.");
 		}
@@ -115,6 +121,5 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(existingUser);
 
 	}
-	
 
 }

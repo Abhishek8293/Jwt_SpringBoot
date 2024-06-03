@@ -20,7 +20,7 @@ public class MailServiceImpl implements MailService {
 
 	@Override
 	public void sendVerificationMail(User user, String token) {
-		String url = "http://localhost:8080/auth/verify/" + token;
+		String url = "http://localhost:8080/auth/verify-email/" + token;
 		// String message = "Click the following link to verify your email: " + url;
 		// sendSimpleMessage(user.getEmail(), "Email Verification", message);
 
@@ -65,6 +65,31 @@ public class MailServiceImpl implements MailService {
 		helper.setText(htmlBody, true);
 		javaMailSender.send(message);
 
+	}
+
+	@Override
+	public void sendForgotPasswordVerificationMail(User user, String token) {
+		String url = "http://localhost:8080/auth/verify/reset-password-email/"+ token;
+
+		String htmlBody = "<!DOCTYPE html>" + 
+				"<html>" + 
+				"<head>" +
+				"<meta charset=\"UTF-8\">" +
+				"<title>Reset Password Email Verification</title>" +
+				"<style>body{font-family:sans-serif;}</style>"+
+				"</head>" +
+				"<body>" +
+				"<p>Dear <b>"+user.getUserName()+"</b></p>"+
+				"<p>We received a request to reset the password of your account.</p>"+
+				"<p>To set new password <a href=" +url+ "><b>Click Here<b/> </a></p>" +
+				"</body>" +
+				"</html>";
+		try {
+			sendeMimeMessage(user.getEmail(), "Reset Password Email Verification", htmlBody);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }

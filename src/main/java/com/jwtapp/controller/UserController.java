@@ -40,15 +40,15 @@ public class UserController {
 				HttpStatus.CREATED, registeredUser);
 	}
 
-	@GetMapping
+	@GetMapping("/userlist")
 	public ResponseEntity<?> getAllUser() {
 		List<User> usrList = userServiceImpl.getAllUser();
 		return ResponseHandler.responseBuilder("All registred user", HttpStatus.OK, usrList);
 	}
 
-	@GetMapping("{email}")
-	public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
-		User user = userServiceImpl.getUserByEmail(email);
+	@GetMapping
+	public ResponseEntity<?> getUserByEmail(@RequestHeader("Authorization") String authHeader) {
+		User user = userServiceImpl.getUserByEmail(authHeader);
 		return ResponseHandler.responseBuilder("Requested user", HttpStatus.OK, user);
 	}
 

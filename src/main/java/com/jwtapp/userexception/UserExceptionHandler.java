@@ -50,4 +50,13 @@ public class UserExceptionHandler {
 		responseBody.put("timestamp", LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
 	}
+	
+	@ExceptionHandler(value = {UserAlreadyExistsException.class})
+	public ResponseEntity<?> handleUserAlreadyExistsException(UserAlreadyExistsException ex){
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("error", ex.getMessage());
+		responseBody.put("httpStatus", HttpStatus.CONFLICT);
+		responseBody.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(responseBody);
+	}
 }

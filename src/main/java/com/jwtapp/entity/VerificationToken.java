@@ -34,7 +34,7 @@ public class VerificationToken {
 	private String token;
 
 	@Column(nullable = false)
-	private LocalDateTime expiryDate;
+	private LocalDateTime creationDateTime;
 
 	@OneToOne
 	@JoinColumn(name = "user_fk_id")

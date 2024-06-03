@@ -10,10 +10,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jwtapp.authexception.verificationTokenExpiredException;
+import com.jwtapp.dto.ForgotPasswordDto;
 import com.jwtapp.dto.LoginRequestDto;
+import com.jwtapp.dto.ResetPasswordDto;
 import com.jwtapp.entity.User;
 import com.jwtapp.entity.VerificationToken;
 import com.jwtapp.mail.MailServiceImpl;
@@ -24,6 +27,7 @@ import com.jwtapp.securityconfig.CustomUserDetailsService;
 import com.jwtapp.securityconfig.JwtService;
 import com.jwtapp.userexception.UserNotFoundException;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -43,6 +47,9 @@ public class AuthServiceImpl implements AuthService {
 	private final MailServiceImpl mailServiceImpl;
 
 	private final CustomUserDetailsService userDetailsService;
+	
+	private final PasswordEncoder passwordEncoder;
+	
 
 	@Override
 	public String login(LoginRequestDto loginRequest) {
@@ -75,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
 	public void verifyUser(String token) {
 		VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime expiryWithBuffer = verificationToken.getExpiryDate().plusSeconds(60);
+		LocalDateTime expiryWithBuffer = verificationToken.getCreationDateTime().plusSeconds(60);
 
 		if (verificationToken == null || now.isAfter(expiryWithBuffer)) {
 			throw new verificationTokenExpiredException("Verification Token Invalid or Expired.");
@@ -99,11 +106,52 @@ public class AuthServiceImpl implements AuthService {
 		// Generate Verification Token
 		String token = UUID.randomUUID().toString();
 		// Save Token
-		VerificationToken verificationToken = VerificationToken.builder().token(token).expiryDate(LocalDateTime.now())
+		VerificationToken verificationToken = VerificationToken.builder().token(token).creationDateTime(LocalDateTime.now())
 				.user(existingUser).build();
 		verificationTokenRepository.save(verificationToken);
 		mailServiceImpl.sendVerificationMail(existingUser, token);
 
 	}
+
+	@Override
+	public void forgotPassword(ForgotPasswordDto forgotPasswordDto) {
+		Optional<User> user = userRepository.findByEmail(forgotPasswordDto.getEmail());
+		if (user.isEmpty()) {
+			throw new UserNotFoundException("Please provide an registerd email.");
+		}
+		User existingUser = user.get();
+		// Generate Verification Token
+		String token = UUID.randomUUID().toString();
+		// Save Token
+		VerificationToken verificationToken = VerificationToken.builder().token(token).creationDateTime(LocalDateTime.now())
+				.user(existingUser).build();
+		verificationTokenRepository.save(verificationToken);
+		// Send reset password Mail
+		mailServiceImpl.sendForgotPasswordVerificationMail(existingUser, token);
+	}
+
+	@Override
+	public void verifyForgotPasswordEmail(String token) {
+		VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime expiryWithBuffer = verificationToken.getCreationDateTime().plusSeconds(60);
+		if (verificationToken == null || now.isAfter(expiryWithBuffer)) {
+			throw new verificationTokenExpiredException("Verification Token Invalid or Expired.");
+		}
+	}
+
+	public void updatePassword( ResetPasswordDto resetPasswordDto) {
+		VerificationToken verificationToken = verificationTokenRepository.findByToken(resetPasswordDto.getToken());
+		//find the user using the token
+		User user = verificationToken.getUser();
+		//Hash and set the new hashed password to user
+		user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
+		//save the user with new hashed password
+		userRepository.save(user);
+		//delete the token
+		verificationTokenRepository.deleteById(verificationToken.getId());
+	}
+	
+	
 
 }

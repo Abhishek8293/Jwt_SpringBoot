@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jwtapp.dto.ForgotPasswordDto;
 import com.jwtapp.dto.LoginRequestDto;
+import com.jwtapp.dto.ResetPasswordDto;
 import com.jwtapp.response.ResponseHandler;
 import com.jwtapp.service.AuthServiceImpl;
 
@@ -23,8 +25,7 @@ public class AuthController {
 
 	private final AuthServiceImpl authServiceImpl;
 
-
-	@GetMapping("/verify/{token}")
+	@GetMapping("/verify-email/{token}")
 	public ResponseEntity<?> verifyUser(@PathVariable String token) {
 		authServiceImpl.verifyUser(token);
 		return ResponseHandler.responseBuilder("Email verified successfully.", HttpStatus.OK, null);
@@ -39,7 +40,26 @@ public class AuthController {
 	@GetMapping("/resend/{email}")
 	public ResponseEntity<?> resendVerificationEmail(@PathVariable String email) {
 		authServiceImpl.resendVerificationEmail(email);
-		return ResponseHandler.responseBuilder("Verification mail is sent to : "+email, HttpStatus.OK, null);
+		return ResponseHandler.responseBuilder("Verification mail is sent to : " + email, HttpStatus.OK, null);
+	}
+
+	@PostMapping("/forgot-password")
+	public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordDto forgotPasswordDto) {
+		authServiceImpl.forgotPassword(forgotPasswordDto);
+		return ResponseHandler.responseBuilder("Reset password verification email sent successfully.", HttpStatus.OK,
+				null);
+	}
+
+	@GetMapping("/verify/reset-password-email/{token}")
+	public ResponseEntity<?> verifyForgotPasswordEmail(@PathVariable String token) {
+		authServiceImpl.verifyForgotPasswordEmail(token);
+		return ResponseHandler.responseBuilder("Reset Password Mail Verified Successfully.", HttpStatus.OK, null);
+	}
+
+	@PostMapping("/reset-password")
+	public ResponseEntity<?> updatePassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) {
+		authServiceImpl.updatePassword(resetPasswordDto);
+		return ResponseHandler.responseBuilder("Your Password Is Successfully Updated.", HttpStatus.OK, null);
 	}
 
 }
