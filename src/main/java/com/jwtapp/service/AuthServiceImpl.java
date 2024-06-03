@@ -19,6 +19,7 @@ import com.jwtapp.dto.ResetPasswordDto;
 import com.jwtapp.entity.User;
 import com.jwtapp.entity.VerificationToken;
 import com.jwtapp.mail.MailServiceImpl;
+import com.jwtapp.repository.JwtTokenRepository;
 import com.jwtapp.repository.UserRepository;
 import com.jwtapp.repository.VerificationTokenRepository;
 import com.jwtapp.securityconfig.CustomUserDetailsService;
@@ -38,13 +39,13 @@ public class AuthServiceImpl implements AuthService {
 	private final CustomUserDetailsService customUserDetailsService;
 
 	private final VerificationTokenRepository verificationTokenRepository;
+	
+	private final JwtTokenServiceImpl jwtTokenServiceImpl;
 
 	private final UserRepository userRepository;
 
 	private final MailServiceImpl mailServiceImpl;
 
-	private final CustomUserDetailsService userDetailsService;
-	
 	private final PasswordEncoder passwordEncoder;
 	
 
@@ -56,6 +57,8 @@ public class AuthServiceImpl implements AuthService {
 		UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getUserName());
 		// Now generate the JWT token
 		String jwtToken = jwtService.generateToken(userDetails);
+		jwtTokenServiceImpl.setAllJwtTokenLoggedOut(userDetails);
+		jwtTokenServiceImpl.saveJwtToken(userDetails, jwtToken);
 		return jwtToken;
 	}
 

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -14,7 +15,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.jwtapp.entity.JwtToken;
 import com.jwtapp.entity.Role;
+import com.jwtapp.repository.JwtTokenRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -22,9 +25,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class JwtService {
+	
+	private final JwtTokenRepository jwtTokenRepository;
 
 	// expiration time
 	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60; // This 5hr*60 minutes *60 seconds
@@ -82,7 +89,8 @@ public class JwtService {
 	// To validate the token
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String userNameFromToken = getUsernameFromToken(token);
-		return (userNameFromToken.equals(userDetails.getUsername()) && !isTokenExpired(token));
+		boolean isValidJwtToken = jwtTokenRepository.findByJwtToken(token).map(t->!t.isLoggedOut()).orElse(false);
+		return (userNameFromToken.equals(userDetails.getUsername()) && !isTokenExpired(token) && isValidJwtToken);
 	}
 	
 	//take AuthHeader and return the username
