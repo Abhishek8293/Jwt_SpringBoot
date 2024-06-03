@@ -2,18 +2,21 @@ package com.jwtapp.service;
 
 import com.jwtapp.dto.ForgotPasswordDto;
 import com.jwtapp.dto.LoginRequestDto;
+import com.jwtapp.dto.ResetPasswordDto;
 import com.jwtapp.entity.User;
 
 public interface AuthService {
 	
 	String login(LoginRequestDto loginRequest);
 	
-	void verifyUser(String token);
+	void verifyUserByEmail(String token);
 	
-	void resendVerificationEmail(String email);
+	void resendUserVerificationEmail(String email);
 	
 	void forgotPassword(ForgotPasswordDto forgotPasswordDto);
 	
-	void verifyForgotPasswordEmail(String token);
+	void verifyResetPasswordEmail(String token);
+	
+	void updatePassword( ResetPasswordDto resetPasswordDto);
 
 }

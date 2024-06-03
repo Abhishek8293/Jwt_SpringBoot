@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void changePassword(ChangePasswordDto changePasswordDto, String authHeader) {
+	public void changeUserPassword(ChangePasswordDto changePasswordDto, String authHeader) {
 		String username = jwtService.getUsernameFromAuthHeader(authHeader);
 		Optional<User> user = userRepository.findByEmail(username);
 		if (user.isEmpty()) {

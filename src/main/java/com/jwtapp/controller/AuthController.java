@@ -25,21 +25,21 @@ public class AuthController {
 
 	private final AuthServiceImpl authServiceImpl;
 
-	@GetMapping("/verify-email/{token}")
-	public ResponseEntity<?> verifyUser(@PathVariable String token) {
-		authServiceImpl.verifyUser(token);
-		return ResponseHandler.responseBuilder("Email verified successfully.", HttpStatus.OK, null);
-	}
-
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto loginRequest) {
 		String jwtToken = authServiceImpl.login(loginRequest);
 		return ResponseHandler.responseBuilder("Successfully logged in", HttpStatus.OK, jwtToken);
 	}
 
+	@GetMapping("/verify-email/{token}")
+	public ResponseEntity<?> verifyUserByEmail(@PathVariable String token) {
+		authServiceImpl.verifyUserByEmail(token);
+		return ResponseHandler.responseBuilder("Email verified successfully.", HttpStatus.OK, null);
+	}
+
 	@GetMapping("/resend/{email}")
-	public ResponseEntity<?> resendVerificationEmail(@PathVariable String email) {
-		authServiceImpl.resendVerificationEmail(email);
+	public ResponseEntity<?> resendUserVerificationEmail(@PathVariable String email) {
+		authServiceImpl.resendUserVerificationEmail(email);
 		return ResponseHandler.responseBuilder("Verification mail is sent to : " + email, HttpStatus.OK, null);
 	}
 
@@ -51,8 +51,8 @@ public class AuthController {
 	}
 
 	@GetMapping("/verify/reset-password-email/{token}")
-	public ResponseEntity<?> verifyForgotPasswordEmail(@PathVariable String token) {
-		authServiceImpl.verifyForgotPasswordEmail(token);
+	public ResponseEntity<?> verifyResetPasswordEmail(@PathVariable String token) {
+		authServiceImpl.verifyResetPasswordEmail(token);
 		return ResponseHandler.responseBuilder("Reset Password Mail Verified Successfully.", HttpStatus.OK, null);
 	}
 

@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -22,12 +21,10 @@ import com.jwtapp.entity.VerificationToken;
 import com.jwtapp.mail.MailServiceImpl;
 import com.jwtapp.repository.UserRepository;
 import com.jwtapp.repository.VerificationTokenRepository;
-import com.jwtapp.response.ResponseHandler;
 import com.jwtapp.securityconfig.CustomUserDetailsService;
 import com.jwtapp.securityconfig.JwtService;
 import com.jwtapp.userexception.UserNotFoundException;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -79,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public void verifyUser(String token) {
+	public void verifyUserByEmail(String token) {
 		VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime expiryWithBuffer = verificationToken.getCreationDateTime().plusSeconds(60);
@@ -94,7 +91,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public void resendVerificationEmail(String email) {
+	public void resendUserVerificationEmail(String email) {
 		Optional<User> user = userRepository.findByEmail(email);
 		if (user.isEmpty()) {
 			throw new UserNotFoundException("Please provide an already registerd email.");
@@ -131,7 +128,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public void verifyForgotPasswordEmail(String token) {
+	public void verifyResetPasswordEmail(String token) {
 		VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime expiryWithBuffer = verificationToken.getCreationDateTime().plusSeconds(60);

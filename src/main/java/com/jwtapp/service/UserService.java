@@ -19,6 +19,6 @@ public interface UserService {
 	
 	User updateUserByEmail(UserUpdateDto userUpdateDto, String authHeader);
 	
-	void changePassword(ChangePasswordDto changePasswordDto, String  authHeader);
+	void changeUserPassword(ChangePasswordDto changePasswordDto, String  authHeader);
 
 }

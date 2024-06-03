@@ -68,9 +68,9 @@ public class UserController {
 	}
 
 	@PatchMapping
-	public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto,
+	public ResponseEntity<?> changeUserPassword(@Valid @RequestBody ChangePasswordDto changePasswordDto,
 			@RequestHeader("Authorization") String authHeader) {
-		userServiceImpl.changePassword(changePasswordDto, authHeader);
+		userServiceImpl.changeUserPassword(changePasswordDto, authHeader);
 		return ResponseHandler.responseBuilder("Passowrd is successfully changed.", HttpStatus.OK, null);
 	}
 
