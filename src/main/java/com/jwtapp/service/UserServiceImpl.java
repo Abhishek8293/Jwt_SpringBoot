@@ -39,28 +39,28 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User registerUser(UserRegistrationDto userRegistrationDto) {
-		User existingUser = userRepository.findByEmail(userRegistrationDto.getEmail())
-				.orElseThrow(() -> new UserAlreadyExistsException(
-						"User with email " + userRegistrationDto.getEmail() + " is already registered."));
-
-		// Save User with inactive status
-		User newUser = User.builder().userName(userRegistrationDto.getUserName()).email(userRegistrationDto.getEmail())
-				.password(passwordEncoder.encode(userRegistrationDto.getPassword()))
-				.roles(userRegistrationDto.getRoles()).isActive(false).build();
-		User savedUser = userRepository.save(newUser);
-
-		// Generate Verification Token
-		String token = UUID.randomUUID().toString();
-
-		// Save Token
-		VerificationToken verificationToken = VerificationToken.builder().token(token)
-				.creationDateTime(LocalDateTime.now()).user(newUser).build();
-		verificationTokenRepository.save(verificationToken);
-
-		// Send Mail
-		mailServiceImpl.sendVerificationMail(savedUser, token);
-
-		return savedUser;
+		User existingUser = userRepository.findByEmail(userRegistrationDto.getEmail()).orElse(null);
+		if (existingUser != null) {
+			// User already exists
+			throw new UserAlreadyExistsException(
+					"User with email " + userRegistrationDto.getEmail() + " is already registered.");
+		} else {
+			// Save User with inactive status
+			User newUser = User.builder().userName(userRegistrationDto.getUserName())
+					.email(userRegistrationDto.getEmail())
+					.password(passwordEncoder.encode(userRegistrationDto.getPassword()))
+					.roles(userRegistrationDto.getRoles()).isActive(false).build();
+			User savedUser = userRepository.save(newUser);
+			// Generate Verification Token
+			String token = UUID.randomUUID().toString();
+			// Save Token
+			VerificationToken verificationToken = VerificationToken.builder().token(token)
+					.creationDateTime(LocalDateTime.now()).user(newUser).build();
+			verificationTokenRepository.save(verificationToken);
+			// Send Mail
+			mailServiceImpl.sendVerificationMail(savedUser, token);
+			return savedUser;
+		}
 	}
 
 	@Override
