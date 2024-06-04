@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
 	private final CustomUserDetailsService customUserDetailsService;
 
 	private final VerificationTokenRepository verificationTokenRepository;
-	
+
 	private final JwtTokenServiceImpl jwtTokenServiceImpl;
 
 	private final UserRepository userRepository;
@@ -47,7 +47,6 @@ public class AuthServiceImpl implements AuthService {
 	private final MailServiceImpl mailServiceImpl;
 
 	private final PasswordEncoder passwordEncoder;
-	
 
 	@Override
 	public String login(LoginRequestDto loginRequest) {
@@ -95,19 +94,15 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public void resendUserVerificationEmail(String email) {
-		Optional<User> user = userRepository.findByEmail(email);
-		if (user.isEmpty()) {
-			throw new UserNotFoundException("Please provide an already registerd email.");
-		}
-
-		User existingUser = user.get();
+		User existingUser = userRepository.findByEmail(email)
+				.orElseThrow(() -> new UserNotFoundException("Please providen an already registerd email."));
 		// deleting the already existed verification token.
 		verificationTokenRepository.deleteByUserId(existingUser.getUserId());
 		// Generate Verification Token
 		String token = UUID.randomUUID().toString();
 		// Save Token
-		VerificationToken verificationToken = VerificationToken.builder().token(token).creationDateTime(LocalDateTime.now())
-				.user(existingUser).build();
+		VerificationToken verificationToken = VerificationToken.builder().token(token)
+				.creationDateTime(LocalDateTime.now()).user(existingUser).build();
 		verificationTokenRepository.save(verificationToken);
 		mailServiceImpl.sendVerificationMail(existingUser, token);
 
@@ -115,16 +110,13 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public void forgotPassword(ForgotPasswordDto forgotPasswordDto) {
-		Optional<User> user = userRepository.findByEmail(forgotPasswordDto.getEmail());
-		if (user.isEmpty()) {
-			throw new UserNotFoundException("Please provide an registerd email.");
-		}
-		User existingUser = user.get();
+		User existingUser = userRepository.findByEmail(forgotPasswordDto.getEmail())
+				.orElseThrow(() -> new UserNotFoundException("Please providen an already registerd email."));
 		// Generate Verification Token
 		String token = UUID.randomUUID().toString();
 		// Save Token
-		VerificationToken verificationToken = VerificationToken.builder().token(token).creationDateTime(LocalDateTime.now())
-				.user(existingUser).build();
+		VerificationToken verificationToken = VerificationToken.builder().token(token)
+				.creationDateTime(LocalDateTime.now()).user(existingUser).build();
 		verificationTokenRepository.save(verificationToken);
 		// Send reset password Mail
 		mailServiceImpl.sendForgotPasswordVerificationMail(existingUser, token);
@@ -140,18 +132,16 @@ public class AuthServiceImpl implements AuthService {
 		}
 	}
 
-	public void updatePassword( ResetPasswordDto resetPasswordDto) {
+	public void updatePassword(ResetPasswordDto resetPasswordDto) {
 		VerificationToken verificationToken = verificationTokenRepository.findByToken(resetPasswordDto.getToken());
-		//find the user using the token
+		// find the user using the token
 		User user = verificationToken.getUser();
-		//Hash and set the new hashed password to user
+		// Hash and set the new hashed password to user
 		user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
-		//save the user with new hashed password
+		// save the user with new hashed password
 		userRepository.save(user);
-		//delete the token
+		// delete the token
 		verificationTokenRepository.deleteById(verificationToken.getId());
 	}
-	
-	
 
 }

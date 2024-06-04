@@ -39,10 +39,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User registerUser(UserRegistrationDto userRegistrationDto) {
-		Optional<User> existingUser = userRepository.findByEmail(userRegistrationDto.getEmail());
-		if(existingUser.isPresent()) {
-			throw new UserAlreadyExistsException("User with email "+userRegistrationDto.getEmail()+" is already registered.");
-		}
+		User existingUser = userRepository.findByEmail(userRegistrationDto.getEmail())
+				.orElseThrow(() -> new UserAlreadyExistsException(
+						"User with email " + userRegistrationDto.getEmail() + " is already registered."));
 
 		// Save User with inactive status
 		User newUser = User.builder().userName(userRegistrationDto.getUserName()).email(userRegistrationDto.getEmail())
@@ -54,8 +53,8 @@ public class UserServiceImpl implements UserService {
 		String token = UUID.randomUUID().toString();
 
 		// Save Token
-		VerificationToken verificationToken = VerificationToken.builder().token(token).creationDateTime(LocalDateTime.now())
-				.user(newUser).build();
+		VerificationToken verificationToken = VerificationToken.builder().token(token)
+				.creationDateTime(LocalDateTime.now()).user(newUser).build();
 		verificationTokenRepository.save(verificationToken);
 
 		// Send Mail
@@ -73,21 +72,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserByEmail(String authHeader) {
 		String username = jwtService.getUsernameFromAuthHeader(authHeader);
-		Optional<User> user = userRepository.findByEmail(username);
-		if (user.isEmpty()) {
-			throw new UserNotFoundException("Requested user does not exist.");
-		}
-		return user.get();
+		User existingUser = userRepository.findByEmail(username)
+				.orElseThrow(() -> new UserNotFoundException("Requested user does not exist."));
+		return existingUser;
 	}
 
 	@Override
 	public String deleteUserByEmail(String authHeader) {
 		String username = jwtService.getUsernameFromAuthHeader(authHeader);
-		Optional<User> user = userRepository.findByEmail(username);
-		if (user.isEmpty()) {
-			throw new UserNotFoundException("Requested user does not exist.");
-		}
-		User existingUser = user.get();
+		User existingUser = userRepository.findByEmail(username)
+				.orElseThrow(() -> new UserNotFoundException("Requested user does not exist."));
 		userRepository.deleteById(existingUser.getUserId());
 		return existingUser.getEmail();
 	}
@@ -95,12 +89,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User updateUserByEmail(UserUpdateDto userUpdateDto, String authHeader) {
 		String username = jwtService.getUsernameFromAuthHeader(authHeader);
-		Optional<User> user = userRepository.findByEmail(username);
-		if (user.isEmpty()) {
-			throw new UserNotFoundException("Requested user does not exist.");
-		}
-		User existingUser = user.get();
-		existingUser.builder().userName(userUpdateDto.getUserName()).email(userUpdateDto.getEmail()).build();
+		User existingUser = userRepository.findByEmail(username)
+				.orElseThrow(() -> new UserNotFoundException("Requested user does not exist."));
+		existingUser.setUserName(userUpdateDto.getUserName());
+		existingUser.setEmail(userUpdateDto.getEmail());
 		User savedUser = userRepository.save(existingUser);
 		return savedUser;
 	}
@@ -108,12 +100,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void changeUserPassword(ChangePasswordDto changePasswordDto, String authHeader) {
 		String username = jwtService.getUsernameFromAuthHeader(authHeader);
-		Optional<User> user = userRepository.findByEmail(username);
-		if (user.isEmpty()) {
-			throw new UserNotFoundException("Requested user does not exist.");
-		}
-
-		User existingUser = user.get();
+		User existingUser = userRepository.findByEmail(username)
+				.orElseThrow(() -> new UserNotFoundException("Requested user does not exist."));
 		if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), existingUser.getPassword())) {
 			throw new IncorrectCurrentPasswordException("Given current password is incorrect.");
 		}
