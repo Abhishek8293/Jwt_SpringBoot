@@ -19,7 +19,7 @@ public class MailServiceImpl implements MailService {
 	private final JavaMailSender javaMailSender;
 
 	@Override
-	public void sendVerificationMail(User user, String token) {
+	public void sendUserRegistrationVerificationMail(User user, String token) {
 		String url = "http://localhost:8080/auth/verify-email/" + token;
 		// String message = "Click the following link to verify your email: " + url;
 		// sendSimpleMessage(user.getEmail(), "Email Verification", message);

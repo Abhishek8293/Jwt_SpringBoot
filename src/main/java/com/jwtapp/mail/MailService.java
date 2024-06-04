@@ -10,7 +10,7 @@ public interface MailService {
 
 	void sendeMimeMessage(String to, String subject, String text) throws MessagingException;
 
-	void sendVerificationMail(User user, String token);
+	void sendUserRegistrationVerificationMail(User user, String token);
 
 	void sendForgotPasswordVerificationMail(User user, String token);
 

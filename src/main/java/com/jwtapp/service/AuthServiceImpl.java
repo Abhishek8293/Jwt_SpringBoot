@@ -93,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public void resendUserVerificationEmail(String email) {
+	public void resendUserRegistrationVerificationEmail(String email) {
 		User existingUser = userRepository.findByEmail(email)
 				.orElseThrow(() -> new UserNotFoundException("Please providen an already registerd email."));
 		// deleting the already existed verification token.
@@ -104,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
 		VerificationToken verificationToken = VerificationToken.builder().token(token)
 				.creationDateTime(LocalDateTime.now()).user(existingUser).build();
 		verificationTokenRepository.save(verificationToken);
-		mailServiceImpl.sendVerificationMail(existingUser, token);
+		mailServiceImpl.sendUserRegistrationVerificationMail(existingUser, token);
 
 	}
 

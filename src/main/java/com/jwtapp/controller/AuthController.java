@@ -39,7 +39,7 @@ public class AuthController {
 
 	@GetMapping("/resend/{email}")
 	public ResponseEntity<?> resendUserVerificationEmail(@PathVariable String email) {
-		authServiceImpl.resendUserVerificationEmail(email);
+		authServiceImpl.resendUserRegistrationVerificationEmail(email);
 		return ResponseHandler.responseBuilder("Verification mail is sent to : " + email, HttpStatus.OK, null);
 	}
 

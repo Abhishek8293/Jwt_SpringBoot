@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 					.creationDateTime(LocalDateTime.now()).user(newUser).build();
 			verificationTokenRepository.save(verificationToken);
 			// Send Mail
-			mailServiceImpl.sendVerificationMail(savedUser, token);
+			mailServiceImpl.sendUserRegistrationVerificationMail(savedUser, token);
 			return savedUser;
 		}
 	}

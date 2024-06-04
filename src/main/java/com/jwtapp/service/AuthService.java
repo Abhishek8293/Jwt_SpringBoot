@@ -11,7 +11,7 @@ public interface AuthService {
 	
 	void verifyUserByEmail(String token);
 	
-	void resendUserVerificationEmail(String email);
+	void resendUserRegistrationVerificationEmail(String email);
 	
 	void forgotPassword(ForgotPasswordDto forgotPasswordDto);
 	
