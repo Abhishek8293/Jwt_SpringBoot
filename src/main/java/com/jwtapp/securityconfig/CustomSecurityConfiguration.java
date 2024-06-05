@@ -41,7 +41,10 @@ public class CustomSecurityConfiguration {
 	
 	@Autowired
 	private CustomLogoutHandler customLogoutHandler;
+	
+	
 
+	//Configuration of Security Filter
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
@@ -66,6 +69,7 @@ public class CustomSecurityConfiguration {
 		return new BCryptPasswordEncoder();
 	}
 
+	//Configuration of Authentication Provider
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -74,6 +78,7 @@ public class CustomSecurityConfiguration {
 		return authenticationProvider;
 	}
 
+	//Configuration of Authentication Manager
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
