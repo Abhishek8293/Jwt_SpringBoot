@@ -41,7 +41,6 @@ public class CustomLogoutHandler implements LogoutHandler {
 		try {
 			response.getWriter().write("Successfully logged out");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
