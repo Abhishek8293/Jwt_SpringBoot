@@ -40,5 +40,14 @@ public class AuthExceptionHandler {
 		responseBody.put("timestamp", LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody);
 	}
+	
+	@ExceptionHandler(value = { PasswordDoesNotMatchException.class })
+	public ResponseEntity<Object> handlePasswordDoesNotMatchExpiredException(PasswordDoesNotMatchException ex) {
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("error", ex.getMessage());
+		responseBody.put("httpStatus", HttpStatus.UNAUTHORIZED);
+		responseBody.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody);
+	}
 
 }

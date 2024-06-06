@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.jwtapp.authexception.PasswordDoesNotMatchException;
 import com.jwtapp.authexception.verificationTokenExpiredException;
 import com.jwtapp.dto.ForgotPasswordDto;
 import com.jwtapp.dto.LoginRequestDto;
@@ -50,9 +51,14 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public String login(LoginRequestDto loginRequest) {
-		// authenticating the username and password with database
-		doAuthenticate(loginRequest.getUserName(), loginRequest.getPassword());
-		// if authenticated get the user by username
+		User existingUser = userRepository.findByEmail(loginRequest.getUserName())
+				.orElseThrow(() -> new UserNotFoundException("Incorrect Username."));
+
+		if (passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword())) {
+			doAuthenticate(loginRequest.getUserName(), loginRequest.getPassword());
+		} else {
+			throw new PasswordDoesNotMatchException("Incorrect Password.");
+		}
 		UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getUserName());
 		// Now generate the JWT token
 		String jwtToken = jwtService.generateToken(userDetails);
@@ -63,10 +69,6 @@ public class AuthServiceImpl implements AuthService {
 
 	private void doAuthenticate(String email, String password) {
 		try {
-//			UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-//			if (!userDetails.isEnabled()) {
-//				throw new DisabledException("Please verify your email: " + email + "!!");
-//			}
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,
 					password);
 			authenticationManager.authenticate(authenticationToken);

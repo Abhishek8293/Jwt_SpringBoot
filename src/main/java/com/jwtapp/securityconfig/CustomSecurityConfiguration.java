@@ -42,8 +42,6 @@ public class CustomSecurityConfiguration {
 	@Autowired
 	private CustomLogoutHandler customLogoutHandler;
 	
-	
-
 	//Configuration of Security Filter
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -59,7 +57,6 @@ public class CustomSecurityConfiguration {
 						.logoutUrl("/logout")
 						.addLogoutHandler(customLogoutHandler)
 						.logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext() ));
-
 		return http.build();
 	}
 
