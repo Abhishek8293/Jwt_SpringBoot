@@ -1,4 +1,4 @@
-package com.jwtapp.smsTwilio;
+package com.jwtapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OtpRequestDto {
-	private String userName;
-	private String phoneNumber;
+public class OtpVerificationDto {
+	
+	private String otp;
+	private String userId;
 
 }

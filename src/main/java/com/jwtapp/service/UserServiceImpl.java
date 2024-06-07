@@ -13,7 +13,6 @@ import com.jwtapp.dto.UserRegistrationDto;
 import com.jwtapp.dto.UserUpdateDto;
 import com.jwtapp.entity.User;
 import com.jwtapp.entity.VerificationToken;
-import com.jwtapp.mail.MailServiceImpl;
 import com.jwtapp.repository.UserRepository;
 import com.jwtapp.repository.VerificationTokenRepository;
 import com.jwtapp.securityconfig.JwtService;
@@ -34,6 +33,8 @@ public class UserServiceImpl implements UserService {
 	private final PasswordEncoder passwordEncoder;
 
 	private final MailServiceImpl mailServiceImpl;
+	
+	private final SmsServiceImpl smsServiceImpl;
 
 	private final JwtService jwtService;
 
@@ -59,6 +60,7 @@ public class UserServiceImpl implements UserService {
 			verificationTokenRepository.save(verificationToken);
 			// Send Mail
 			mailServiceImpl.sendUserRegistrationVerificationMail(savedUser, token);
+			//smsServiceImpl.sendSms(userRegistrationDto.getUserName(),userRegistrationDto.getPhoneNumber());
 			return savedUser;
 		}
 	}

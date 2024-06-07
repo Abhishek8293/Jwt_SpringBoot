@@ -19,7 +19,6 @@ import com.jwtapp.dto.LoginRequestDto;
 import com.jwtapp.dto.ResetPasswordDto;
 import com.jwtapp.entity.User;
 import com.jwtapp.entity.VerificationToken;
-import com.jwtapp.mail.MailServiceImpl;
 import com.jwtapp.repository.JwtTokenRepository;
 import com.jwtapp.repository.UserRepository;
 import com.jwtapp.repository.VerificationTokenRepository;

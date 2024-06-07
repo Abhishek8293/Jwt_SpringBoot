@@ -1,4 +1,4 @@
-package com.jwtapp.mail;
+package com.jwtapp.service;
 
 import com.jwtapp.entity.User;
 

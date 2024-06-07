@@ -21,4 +21,22 @@ public class SmsExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
 	}
 
+	@ExceptionHandler(value = { OtpNotFoundException.class })
+	public ResponseEntity<?> handleOtpNotFoundException(OtpNotFoundException ex) {
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("error", ex.getMessage());
+		responseBody.put("httpStatus", HttpStatus.NOT_FOUND);
+		responseBody.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody);
+	}
+
+	@ExceptionHandler(value = { OtpExpiredException.class })
+	public ResponseEntity<?> handleOtpExpiredException(OtpExpiredException ex) {
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("error", ex.getMessage());
+		responseBody.put("httpStatus", HttpStatus.BAD_REQUEST);
+		responseBody.put("timestamp", LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+	}
+
 }
