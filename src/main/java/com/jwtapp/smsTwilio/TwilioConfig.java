@@ -1,8 +1,8 @@
 package com.jwtapp.smsTwilio;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.jwtapp.configdetails.TwilioConfigProperties;
 import com.twilio.Twilio;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
@@ -10,13 +10,10 @@ import lombok.Data;
 @Component
 @Data
 public class TwilioConfig {
-	
-	@Value("${twilio.AccountSid}")
-	private String accountSid;
-	@Value("${twilio.AuthToken}")
-	private String authToken;
-	@Value("${twilio.PhoneNumber}")
-	private String phoneNumber;
+
+	private String accountSid = TwilioConfigProperties.ACCOUNT_SID;
+	private String authToken = TwilioConfigProperties.AUTH_TOKEN;
+	private String phoneNumber = TwilioConfigProperties.PHONE_NUMBER;
 
 	@PostConstruct
 	public void setup() {

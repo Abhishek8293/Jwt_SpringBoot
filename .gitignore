@@ -32,5 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 
-Test.java
-application.properties
+TwilioConfigProperties.java
