@@ -12,18 +12,21 @@ import lombok.Data;
 @Data
 @Builder
 public class UserRegistrationDto {
-	
+
 	@NotEmpty(message = "Username cannot be empty.")
 	private String userName;
-	
+
 	@Email(message = "Please enter a valid email address.")
 	@NotEmpty(message = "Email cannot be empty")
 	private String email;
-	
+
+	@NotEmpty(message = "Phone number can not be empty")
+	private String phoneNumber;
+
 	@Size(min = 6, message = "Password must be atleast 6 characters.")
 	@NotEmpty(message = "Password cannot be empty.")
 	private String password;
-	
+
 	@NotNull(message = "Role cannot be null")
 	private Role roles;
 

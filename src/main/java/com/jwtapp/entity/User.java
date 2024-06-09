@@ -29,6 +29,7 @@ public class User {
 	private String userName;
 	@Column(nullable = false, unique = true)
 	private String email;
+	private String phoneNumber;
 	@Column(nullable = false)
 	private String password;
 	private Role roles;

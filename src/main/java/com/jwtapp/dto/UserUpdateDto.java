@@ -15,5 +15,8 @@ public class UserUpdateDto {
 	@Email(message = "Please enter a valid email address")
 	@NotEmpty(message = "Email cannot be empty")
 	private String email;
+	
+	@NotEmpty(message = "Phone number can not be empty")
+	private String phoneNumber;
 
 }

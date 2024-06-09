@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
 			// Save User with inactive status
 			User newUser = User.builder().userName(userRegistrationDto.getUserName())
 					.email(userRegistrationDto.getEmail())
+					.phoneNumber(userRegistrationDto.getPhoneNumber())
 					.password(passwordEncoder.encode(userRegistrationDto.getPassword()))
 					.roles(userRegistrationDto.getRoles()).isActive(false).build();
 			User savedUser = userRepository.save(newUser);
@@ -95,6 +96,7 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new UserNotFoundException("Requested user does not exist."));
 		existingUser.setUserName(userUpdateDto.getUserName());
 		existingUser.setEmail(userUpdateDto.getEmail());
+		existingUser.setPhoneNumber(userUpdateDto.getPhoneNumber());
 		User savedUser = userRepository.save(existingUser);
 		return savedUser;
 	}
