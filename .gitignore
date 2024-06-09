@@ -32,4 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 
-/Jwt_SpringBoot/src/main/resources/application.properties
+src/main/resources/application.properties
